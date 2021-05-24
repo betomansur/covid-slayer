@@ -3,8 +3,8 @@ import pygame
 pygame.init()
 
 # ----- Gera tela principal
-WIDTH = 600
-HEIGHT = 600
+WIDTH = 700
+HEIGHT = 500
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Pygame')
 
