@@ -6,7 +6,7 @@ pygame.init()
 WIDTH = 700
 HEIGHT = 600
 window = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('pygame')
+pygame.display.set_caption('Pygame')
 
 
 # ----- Inicia assets
@@ -19,9 +19,6 @@ jog_img = pygame.transform.scale(jog_img, (JOG_WIDTH, JOG_HEIGHT))
 #assets inimigo
 inim_img = pygame.image.load('Sprites/bacteria1.png').convert_alpha()
 inim_img = pygame.transform.scale(inim_img, (70, 70))
-#assets boss
-boss_img = pygame.image.load('Sprites/bacteria1.png').convert_alpha()
-boss_img = pygame.transform.scale(boss_img, (70, 70))
 #####PONTOS######
 #assets gemas
 #gemab_img = pygame.image.load('img/gemas/hab b.png').convert_alpha()
@@ -30,8 +27,8 @@ boss_img = pygame.transform.scale(boss_img, (70, 70))
 #t_gemas = [gemab_img, gemay_img, gemag_img]
 #################
 #assets chão
-#chao_img = pygame.image.load("sprite do chão").convert_alpha()
-#chao_img = pygame.transform.scale(chao_img, (710, 200))
+chao_img = pygame.image.load("Sprites/plataforma.png").convert_alpha()
+chao_img = pygame.transform.scale(chao_img, (710, 200))
 #assets background
 #background = pygame.image.load('sprite do fundo').convert()
 #background = pygame.transform.scale(background, (700, 620))
@@ -61,8 +58,8 @@ class jogador(pygame.sprite.Sprite):
         self.state = STILL
         self.image = jog_img
         self.rect = self.image.get_rect()
-        self.rect.centerx = 100
-        self.rect.bottom = 580
+        self.rect.centerx = 400
+        self.rect.bottom = HEIGHT-20
         self.speedx = 0
         self.speedy = 0
         self.lifes = VIDAS
@@ -108,7 +105,7 @@ class inimigo(pygame.sprite.Sprite):
         self.image = inim_img
         self.rect = self.image.get_rect()
         self.rect.centerx = 200
-        self.rect.centery = 400
+        self.rect.centery = 200
         self.speedx = 0
         self.speedy = 0
     
@@ -118,6 +115,15 @@ class inimigo(pygame.sprite.Sprite):
         if self.rect.left > WIDTH:
             self.rect.right = -100   
 
+class Plataforma (pygame.sprite.Sprite):
+    def __init__(self,chao_img):
+        
+        pygame.sprite.Sprite.__init__(self)
+        
+        self.image = chao_img
+        self.rect = self.image.get_rect()
+        self.rect.centerx = WIDTH/2
+        self.rect.y = HEIGHT-10
 
 
 game = True
@@ -129,12 +135,16 @@ FPS = 20
 #Cria grupos com as sprites e collides
 all_sprites = pygame.sprite.Group()
 collide_enemy = pygame.sprite.Group()
+collide_gema = pygame.sprite.Group()
+collide_meteoros = pygame.sprite.Group()
 # Criando o jogador, inimigo e gemas
 player = jogador(jog_img, VIDAS)
 enemy = inimigo(inim_img)
+chao = Plataforma(chao_img)
 #Adicionando sprites em uma variável global
 all_sprites.add(player)
 all_sprites.add(enemy)
+all_sprites.add(chao)
 collide_enemy.add(enemy)
 ###################################
 
@@ -159,9 +169,9 @@ while game:
                     player.jump()
             # Verifica se soltou alguma tecla.
             #if event.type == pygame.KEYUP:
-            #    if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-            #        player.image = pygame.image.load('img/jogador1.png').convert_alpha()
-            #        player.speedx = 0
+                #if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                    #player.image = pygame.image.load('img/jogador1.png').convert_alpha()
+                    #player.speedx = 0
 
 
         # ----- Gera saídas
