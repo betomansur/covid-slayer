@@ -14,7 +14,7 @@ pygame.display.set_caption('Pygame')
 #assets jogador
 JOG_WIDTH = 90
 JOG_HEIGHT = 70
-jog_img = pygame.image.load('Pygame-beto-raymond-guiliermo/Sprites/jogador1.png').convert_alpha()
+jog_img = pygame.image.load('Pygame-beto-raymond-guiliermo/Sprites/gunman.png').convert_alpha()
 jog_img = pygame.transform.scale(jog_img, (JOG_WIDTH, JOG_HEIGHT))
 #assets inimigo
 inim_img = pygame.image.load('Pygame-beto-raymond-guiliermo/Sprites/bacteria1.png').convert_alpha()
