@@ -6,7 +6,7 @@ pygame.init()
 WIDTH = 700
 HEIGHT = 600
 window = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Nome não definido ainda')
+pygame.display.set_caption('Pygame')
 
 
 # ----- Inicia assets
@@ -14,10 +14,10 @@ pygame.display.set_caption('Nome não definido ainda')
 #assets jogador
 JOG_WIDTH = 90
 JOG_HEIGHT = 70
-jog_img = pygame.image.load('sprite do jogador').convert_alpha()
+jog_img = pygame.image.load('Sprites/jogador1.png').convert_alpha()
 jog_img = pygame.transform.scale(jog_img, (JOG_WIDTH, JOG_HEIGHT))
 #assets inimigo
-inim_img = pygame.image.load('sprite do inimigo').convert_alpha()
+inim_img = pygame.image.load('Sprites/bacteria1.png').convert_alpha()
 inim_img = pygame.transform.scale(inim_img, (70, 70))
 #####PONTOS######
 #assets gemas
@@ -27,12 +27,12 @@ inim_img = pygame.transform.scale(inim_img, (70, 70))
 #t_gemas = [gemab_img, gemay_img, gemag_img]
 #################
 #assets chão
-chao_img = pygame.image.load("sprite do chão").convert_alpha()
+chao_img = pygame.image.load("Sprites/plataforma.png").convert_alpha()
 chao_img = pygame.transform.scale(chao_img, (710, 200))
 #assets background
-background = pygame.image.load('sprite do fundo').convert()
-background = pygame.transform.scale(background, (700, 620))
-background_rect = background.get_rect()
+#background = pygame.image.load('sprite do fundo').convert()
+#background = pygame.transform.scale(background, (700, 620))
+#background_rect = background.get_rect()
 ###FONTE DE TEXTO QUE O ANDREW TINHA DISPONIBILIZADO###
 #assets fonte de texto
 score_font = pygame.font.Font('font/PressStart2P.ttf', 28)
@@ -58,8 +58,8 @@ class jogador(pygame.sprite.Sprite):
         self.state = STILL
         self.image = jog_img
         self.rect = self.image.get_rect()
-        self.rect.centerx = #posição x
-        self.rect.bottom = #posição da base
+        self.rect.centerx = 400
+        self.rect.bottom = HEIGHT-20
         self.speedx = 0
         self.speedy = 0
         self.lifes = VIDAS
@@ -104,8 +104,8 @@ class inimigo(pygame.sprite.Sprite):
         # Define estado atual
         self.image = inim_img
         self.rect = self.image.get_rect()
-        self.rect.centerx = 
-        self.rect.centery = 
+        self.rect.centerx = 200
+        self.rect.centery = 200
         self.speedx = 0
         self.speedy = 0
     
@@ -115,6 +115,15 @@ class inimigo(pygame.sprite.Sprite):
         if self.rect.left > WIDTH:
             self.rect.right = -100   
 
+class Plataforma (pygame.sprite.Sprite):
+    def __init__(self,chao_img):
+        
+        pygame.sprite.Sprite.__init__(self)
+        
+        self.image = chao_img
+        self.rect = self.image.get_rect()
+        self.rect.centerx = WIDTH/2
+        self.rect.y = HEIGHT-10
 
 
 game = True
@@ -131,9 +140,11 @@ collide_meteoros = pygame.sprite.Group()
 # Criando o jogador, inimigo e gemas
 player = jogador(jog_img, VIDAS)
 enemy = inimigo(inim_img)
+chao = Plataforma(chao_img)
 #Adicionando sprites em uma variável global
 all_sprites.add(player)
 all_sprites.add(enemy)
+all_sprites.add(chao)
 collide_enemy.add(enemy)
 ###################################
 
@@ -157,15 +168,15 @@ while game:
                 elif event.key == pygame.K_UP:
                     player.jump()
             # Verifica se soltou alguma tecla.
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                    player.image = pygame.image.load('img/kirby parado.png').convert_alpha()
-                    player.speedx = 0
+            #if event.type == pygame.KEYUP:
+                #if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                    #player.image = pygame.image.load('img/jogador1.png').convert_alpha()
+                    #player.speedx = 0
 
 
         # ----- Gera saídas
         window.fill((0, 0, 0))  # Preenche com a cor branca
-        window.blit(background, (0, 0))
+        #window.blit(background, (0, 0))
         # Desenhando as sprites
         all_sprites.draw(window)
 
