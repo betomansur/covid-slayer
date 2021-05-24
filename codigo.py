@@ -4,7 +4,7 @@ pygame.init()
 
 # ----- Gera tela principal
 WIDTH = 700
-HEIGHT = 500
+HEIGHT = 550
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Pygame')
 
@@ -30,7 +30,7 @@ inim_img = pygame.transform.scale(inim_img, (70, 70))
 chao_img = pygame.image.load("Pygame-beto-raymond-guiliermo/Sprites/plataforma.png").convert_alpha()
 chao_img = pygame.transform.scale(chao_img, (710, 200))
 #assets background
-bg = pygame.image.load("Pygame-beto-raymond-guiliermo/Sprites/hospital.png")
+bg = pygame.image.load("Pygame-beto-raymond-guiliermo/Sprites/hospital2.png.jpg")
 #background = pygame.image.load('sprite do fundo').convert()
 background = pygame.transform.scale(bg, (700, 620))
 background_rect = background.get_rect()
