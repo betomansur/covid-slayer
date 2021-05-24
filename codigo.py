@@ -6,7 +6,7 @@ pygame.init()
 WIDTH = 700
 HEIGHT = 600
 window = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Nome não definido ainda')
+pygame.display.set_caption('Pygame')
 
 
 # ----- Inicia assets
