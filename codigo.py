@@ -15,7 +15,6 @@ pygame.display.set_caption('Pygame')
 JOG_WIDTH = 90
 JOG_HEIGHT = 70
 jog_img = pygame.image.load('Sprites/jogador1.png').convert_alpha()
-jog_img = pygame.image.load('Sprites/jogador1.png').convert_alpha()
 jog_img = pygame.transform.scale(jog_img, (JOG_WIDTH, JOG_HEIGHT))
 #assets inimigo
 inim_img = pygame.image.load('Sprites/bacteria1.png').convert_alpha()
@@ -31,10 +30,11 @@ inim_img = pygame.transform.scale(inim_img, (70, 70))
 chao_img = pygame.image.load("Sprites/plataforma.png").convert_alpha()
 chao_img = pygame.transform.scale(chao_img, (710, 200))
 #assets background
-bg = pygame.image.load("Sprites/hospital2.png.jpg")
-#background = pygame.image.load('sprite do fundo').convert()
+bg = pygame.image.load("Sprites/hospital2.png.jpg").convert()
 background = pygame.transform.scale(bg, (700, 620))
 background_rect = background.get_rect()
+#assets do tiro
+bullet_img = pygame.image.load('Sprites/laserRed16.png').convert_alpha()
 ###FONTE DE TEXTO QUE O ANDREW TINHA DISPONIBILIZADO###
 #assets fonte de texto
 score_font = pygame.font.Font('font/PressStart2P.ttf', 28)
@@ -52,7 +52,7 @@ VIDAS = 3
 
 #Classe do jogador
 class jogador(pygame.sprite.Sprite):
-    def __init__(self, jog_img, VIDAS):
+    def __init__(self, jog_img, VIDAS, all_sprites ,all_bullets):
         pygame.sprite.Sprite.__init__(self)
 
         # Define estado atual
@@ -65,6 +65,9 @@ class jogador(pygame.sprite.Sprite):
         self.speedx = 0
         self.speedy = 0
         self.lifes = VIDAS
+        self.sprites = all_sprites
+        self.bullets = all_bullets
+        self.tiro  = bullet_img
     
     def update(self):
 
@@ -98,6 +101,13 @@ class jogador(pygame.sprite.Sprite):
             self.speedy -= 50
             self.state = JUMPING    
 
+    #Função do tiro
+    def shoot(self):
+        # A nova bala vai ser criada logo acima e no centro horizontal da nave
+        new_bullet = Bullet(self.tiro, self.rect.top, self.rect.centerx)
+        self.bullets.add(new_bullet)
+        self.sprites.add(new_bullet)
+
 #Classe do inimigo
 class inimigo(pygame.sprite.Sprite):
     def __init__(self, inim_img):
@@ -116,17 +126,27 @@ class inimigo(pygame.sprite.Sprite):
         self.rect.x += 4
         if self.rect.left > WIDTH:
             self.rect.right = -100   
-
-class Plataforma (pygame.sprite.Sprite):
-    def __init__(self,chao_img):
-        
+class Bullet(pygame.sprite.Sprite):
+    # Construtor da classe.
+    def __init__(self, assets, bottom, centerx):
+        # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
-        
-        self.image = chao_img
-        self.rect = self.image.get_rect()
-        self.rect.centerx = WIDTH/2
-        self.rect.y = HEIGHT-10
 
+        self.image = bullet_img
+        self.rect = self.image.get_rect()
+
+        # Coloca no lugar inicial definido em x, y do constutor
+        self.rect.centerx = centerx
+        self.rect.bottom = bottom
+        self.speedx = 10  # Velocidade fixa para cima
+
+    def update(self):
+        # A bala só se move no eixo y
+        self.rect.x += self.speedx
+
+        # Se o tiro passar do inicio da tela, morre.
+        if self.rect.left > WIDTH:
+            self.kill()
 
 game = True
 #Cria um relógio que conta o tempo em jogo
@@ -136,17 +156,14 @@ FPS = 20
 #############COLISõES#############
 #Cria grupos com as sprites e collides
 all_sprites = pygame.sprite.Group()
+all_bullets = pygame.sprite.Group()
 collide_enemy = pygame.sprite.Group()
-collide_gema = pygame.sprite.Group()
-collide_meteoros = pygame.sprite.Group()
 # Criando o jogador, inimigo e gemas
-player = jogador(jog_img, VIDAS)
+player = jogador(jog_img, VIDAS, all_sprites, all_bullets)
 enemy = inimigo(inim_img)
-chao = Plataforma(chao_img)
 #Adicionando sprites em uma variável global
 all_sprites.add(player)
 all_sprites.add(enemy)
-all_sprites.add(chao)
 collide_enemy.add(enemy)
 ###################################
 
@@ -167,8 +184,10 @@ while game:
                     player.speedx -= 8
                 if event.key == pygame.K_RIGHT:
                     player.speedx += 8
-                elif event.key == pygame.K_UP:
+                if event.key == pygame.K_UP:
                     player.jump()
+                if event.key == pygame.K_SPACE:
+                    player.shoot()
             # Verifica se soltou alguma tecla.
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
