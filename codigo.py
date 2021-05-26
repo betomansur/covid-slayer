@@ -52,7 +52,7 @@ VIDAS = 3
 
 #Classe do jogador
 class jogador(pygame.sprite.Sprite):
-    def __init__(self, jog_img, VIDAS, all_sprites ,all_bullets):
+    def __init__(self, jog_img, VIDAS):
         pygame.sprite.Sprite.__init__(self)
 
         # Define estado atual
@@ -79,10 +79,10 @@ class jogador(pygame.sprite.Sprite):
         self.rect.x += self.speedx
 
         #Se jogador colidiu com algum inimigo
-        #collisions = pygame.sprite.spritecollide(self, inimigo, False)
+        collisions = pygame.sprite.spritecollide(self, collide_enemy, False)
         #Perde uma vida
-        #for collision in collisions:
-            #self.lifes -= 1
+        for collision in collisions:
+            self.lifes -= 1
         
         #Corrige a posição para não sair da janela
         if self.rect.left < 0:
@@ -104,7 +104,7 @@ class jogador(pygame.sprite.Sprite):
     #Função do tiro
     def shoot(self):
         # A nova bala vai ser criada logo acima e no centro horizontal da nave
-        new_bullet = Bullet(self.tiro, self.rect.top, self.rect.centerx)
+        new_bullet = Bullet(self.tiro, self.rect.bottom, self.rect.centerx)
         self.bullets.add(new_bullet)
         self.sprites.add(new_bullet)
 
@@ -116,8 +116,8 @@ class inimigo(pygame.sprite.Sprite):
         # Define estado atual
         self.image = inim_img
         self.rect = self.image.get_rect()
-        self.rect.centerx = 200
-        self.rect.centery = 200
+        self.rect.centerx = WIDTH - 20
+        self.rect.centery = HEIGHT - 20
         self.speedx = 0
         self.speedy = 0
     
@@ -159,7 +159,7 @@ all_sprites = pygame.sprite.Group()
 all_bullets = pygame.sprite.Group()
 collide_enemy = pygame.sprite.Group()
 # Criando o jogador, inimigo e gemas
-player = jogador(jog_img, VIDAS, all_sprites, all_bullets)
+player = jogador(jog_img, VIDAS)
 enemy = inimigo(inim_img)
 #Adicionando sprites em uma variável global
 all_sprites.add(player)
@@ -193,6 +193,14 @@ while game:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     player.speedx = 0
 
+        hits = pygame.sprite.spritecollide(player, collide_enemy, True, pygame.sprite.collide_mask)
+
+        if len(hits) > 0:
+            VIDAS -= 1
+            enemy.rect.x = -200
+            all_sprites.add(enemy)
+            collide_enemy.add(enemy)
+
         all_sprites.update()
         collide_enemy.update()
         # ----- Gera saídas
@@ -213,6 +221,9 @@ while game:
         text_rect = text_surface.get_rect()
         text_rect.bottomleft = (10, HEIGHT - 10)
         window.blit(text_surface, text_rect)
+
+        if VIDAS < 1:
+            game = False
 
     pygame.display.update()  # Mostra o novo frame para o jogador
 # ===== Finalização =====
