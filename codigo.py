@@ -49,7 +49,7 @@ PONTOS = 0
 VIDAS = 3
 #######################
 
-#Classe do jogador
+#Cl asse do jogador
 class jogador(pygame.sprite.Sprite):
     def __init__(self, jog_img, VIDAS):
         pygame.sprite.Sprite.__init__(self)
