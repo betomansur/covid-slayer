@@ -4,7 +4,7 @@ pygame.init()
 
 # ----- Gera tela principal
 WIDTH = 700
-HEIGHT = 600
+HEIGHT = 550
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Pygame')
 
@@ -14,10 +14,10 @@ pygame.display.set_caption('Pygame')
 #assets jogador
 JOG_WIDTH = 90
 JOG_HEIGHT = 70
-jog_img = pygame.image.load('Sprites/jogador1.png').convert_alpha()
+jog_img = pygame.image.load('Pygame-beto-raymond-guiliermo/Sprites/gunman.png').convert_alpha()
 jog_img = pygame.transform.scale(jog_img, (JOG_WIDTH, JOG_HEIGHT))
 #assets inimigo
-inim_img = pygame.image.load('Sprites/bacteria1.png').convert_alpha()
+inim_img = pygame.image.load('Pygame-beto-raymond-guiliermo/Sprites/bacteria1.png').convert_alpha()
 inim_img = pygame.transform.scale(inim_img, (70, 70))
 #####PONTOS######
 #assets gemas
@@ -27,15 +27,16 @@ inim_img = pygame.transform.scale(inim_img, (70, 70))
 #t_gemas = [gemab_img, gemay_img, gemag_img]
 #################
 #assets chão
-chao_img = pygame.image.load("Sprites/plataforma.png").convert_alpha()
+chao_img = pygame.image.load("Pygame-beto-raymond-guiliermo/Sprites/plataforma.png").convert_alpha()
 chao_img = pygame.transform.scale(chao_img, (710, 200))
 #assets background
+bg = pygame.image.load("Pygame-beto-raymond-guiliermo/Sprites/hospital2.png.jpg")
 #background = pygame.image.load('sprite do fundo').convert()
-#background = pygame.transform.scale(background, (700, 620))
-#background_rect = background.get_rect()
+background = pygame.transform.scale(bg, (700, 620))
+background_rect = background.get_rect()
 ###FONTE DE TEXTO QUE O ANDREW TINHA DISPONIBILIZADO###
 #assets fonte de texto
-score_font = pygame.font.Font('font/PressStart2P.ttf', 28)
+score_font = pygame.font.Font('Pygame-beto-raymond-guiliermo/font/PressStart2P.ttf', 28)
 
 
 ########EXTRAS#########
@@ -74,10 +75,10 @@ class jogador(pygame.sprite.Sprite):
         self.rect.x += self.speedx
 
         #Se jogador colidiu com algum inimigo
-        collisions = pygame.sprite.spritecollide(self, inimigo, False)
+        #collisions = pygame.sprite.spritecollide(self, inimigo, False)
         #Perde uma vida
-        for collision in collisions:
-            self.lifes -= 1
+        #for collision in collisions:
+            #self.lifes -= 1
         
         #Corrige a posição para não sair da janela
         if self.rect.left < 0:
@@ -162,23 +163,24 @@ while game:
             if event.type == pygame.KEYDOWN:
                 # Dependendo da tecla, altera a velocidade.
                 if event.key == pygame.K_LEFT:
-                    player.speedx -= 9
+                    player.speedx -= 8
                 if event.key == pygame.K_RIGHT:
-                    player.speedx += 9
+                    player.speedx += 8
                 elif event.key == pygame.K_UP:
                     player.jump()
             # Verifica se soltou alguma tecla.
-            #if event.type == pygame.KEYUP:
-                #if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                    #player.image = pygame.image.load('img/jogador1.png').convert_alpha()
-                    #player.speedx = 0
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                    player.speedx = 0
 
-
+        all_sprites.update()
+        collide_enemy.update()
         # ----- Gera saídas
         window.fill((0, 0, 0))  # Preenche com a cor branca
-        #window.blit(background, (0, 0))
+        window.blit(background, (0, 0))
         # Desenhando as sprites
         all_sprites.draw(window)
+        
 
         # Desenhando o score
         text_surface = score_font.render("{:06d}".format(PONTOS), True, (255, 0, 200))
