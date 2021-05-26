@@ -32,8 +32,11 @@ chao_img = pygame.image.load("Pygame-beto-raymond-guiliermo/Sprites/plataforma.p
 chao_img = pygame.transform.scale(chao_img, (710, 200))
 #assets background
 bg = pygame.image.load("Pygame-beto-raymond-guiliermo/Sprites/hospital2.png.jpg").convert()
+go = pygame.image.load("Pygame-beto-raymond-guiliermo/Sprites/gameover.jpg").convert()
 background = pygame.transform.scale(bg, (700, 620))
 background_rect = background.get_rect()
+
+gameover = pygame.transform.scale(go, (700, 620))
 #assets do tiro
 bullet_img = pygame.image.load('Pygame-beto-raymond-guiliermo/Sprites/laserRed16.png').convert_alpha()
 ###FONTE DE TEXTO QUE O ANDREW TINHA DISPONIBILIZADO###
@@ -224,8 +227,14 @@ while game:
         window.blit(text_surface, text_rect)
 
         if VIDAS < 1:
-            game = False
-
+            window.fill((0, 0, 0))  # Preenche com a cor branca
+            window.blit(gameover, (0, 0))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    game = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        game = False
     pygame.display.update()  # Mostra o novo frame para o jogador
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
