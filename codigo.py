@@ -3,7 +3,7 @@ import pygame
 pygame.init()
 
 # ----- Gera tela principal
-WIDTH = 700
+WIDTH = 1000
 HEIGHT = 550
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Pygame')
@@ -15,10 +15,10 @@ pygame.display.set_caption('Pygame')
 JOG_WIDTH = 90
 JOG_HEIGHT = 70
 
-jog_img = pygame.image.load('Pygame-beto-raymond-guiliermo/Sprites/gunman.png').convert_alpha()
+jog_img = pygame.image.load('Sprites/gunman.png').convert_alpha()
 jog_img = pygame.transform.scale(jog_img, (JOG_WIDTH, JOG_HEIGHT))
 #assets inimigo
-inim_img = pygame.image.load('Pygame-beto-raymond-guiliermo/Sprites/bacteria1.png').convert_alpha()
+inim_img = pygame.image.load('Sprites/bacteria1.png').convert_alpha()
 inim_img = pygame.transform.scale(inim_img, (70, 70))
 #####PONTOS######
 #assets gemas
@@ -28,17 +28,17 @@ inim_img = pygame.transform.scale(inim_img, (70, 70))
 #t_gemas = [gemab_img, gemay_img, gemag_img]
 #################
 #assets chão
-chao_img = pygame.image.load("Pygame-beto-raymond-guiliermo/Sprites/plataforma.png").convert_alpha()
+chao_img = pygame.image.load("Sprites/plataforma.png").convert_alpha()
 chao_img = pygame.transform.scale(chao_img, (710, 200))
 #assets background
-bg = pygame.image.load("Pygame-beto-raymond-guiliermo/Sprites/hospital2.png.jpg").convert()
-background = pygame.transform.scale(bg, (700, 620))
+bg = pygame.image.load("Sprites/hospital2.png.jpg").convert_alpha()
+background = pygame.transform.scale(bg, (1000, 620))
 background_rect = background.get_rect()
 #assets do tiro
-bullet_img = pygame.image.load('Pygame-beto-raymond-guiliermo/Sprites/laserRed16.png').convert_alpha()
+bullet_img = pygame.image.load('Sprites/laserRed16.png').convert_alpha()
 ###FONTE DE TEXTO QUE O ANDREW TINHA DISPONIBILIZADO###
 #assets fonte de texto
-score_font = pygame.font.Font('Pygame-beto-raymond-guiliermo/font/PressStart2P.ttf', 28)
+score_font = pygame.font.Font('font/PressStart2P.ttf', 28)
 
 
 ########EXTRAS#########
@@ -99,7 +99,7 @@ class jogador(pygame.sprite.Sprite):
     #Função do tiro
     def shoot(self):
         # A nova bala vai ser criada logo acima e no centro horizontal da nave
-        new_bullet = Bullet(self.tiro, self.rect.bottom, self.rect.centerx)
+        new_bullet = Bullet(self.tiro, self.rect.centery, self.rect.centerx+40)
         self.bullets.add(new_bullet)
         self.sprites.add(new_bullet)
 
@@ -112,7 +112,7 @@ class inimigo(pygame.sprite.Sprite):
         self.image = inim_img
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH - 20
-        self.rect.centery = HEIGHT - 20
+        self.rect.centery = HEIGHT - 40
         self.speedx = 0
         self.speedy = 0
     
@@ -202,6 +202,8 @@ while game:
             enemy.rect.x = -200
             all_sprites.add(enemy)
             collide_enemy.add(enemy)
+
+        
 
         all_sprites.update()
         collide_enemy.update()
