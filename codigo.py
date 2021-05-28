@@ -77,12 +77,6 @@ class jogador(pygame.sprite.Sprite):
         self.rect.y += self.speedy
         #Atualiza a posição x
         self.rect.x += self.speedx
-
-        #Se jogador colidiu com algum inimigo
-        collisions = pygame.sprite.spritecollide(self, collide_enemy, False)
-        #Perde uma vida
-        for collision in collisions:
-            self.lifes -= 1
         
         #Corrige a posição para não sair da janela
         if self.rect.left < 0:
@@ -126,6 +120,8 @@ class inimigo(pygame.sprite.Sprite):
         self.rect.x += 4
         if self.rect.left > WIDTH:
             self.rect.right = -100   
+
+#Classe do tiro
 class Bullet(pygame.sprite.Sprite):
     # Construtor da classe.
     def __init__(self, assets, bottom, centerx):
@@ -138,7 +134,7 @@ class Bullet(pygame.sprite.Sprite):
         # Coloca no lugar inicial definido em x, y do constutor
         self.rect.centerx = centerx
         self.rect.bottom = bottom
-        self.speedx = 10  # Velocidade fixa para cima
+        self.speedx = 20 #Velocidade fixa pro lado
 
     def update(self):
         # A bala só se move no eixo y
@@ -194,9 +190,14 @@ while game:
                     player.speedx = 0
 
         hits = pygame.sprite.spritecollide(player, collide_enemy, True, pygame.sprite.collide_mask)
+        hit2 = pygame.sprite.groupcollide(all_bullets, collide_enemy, True, True)
 
         if len(hits) > 0:
             VIDAS -= 1
+            enemy.rect.x = -200
+            all_sprites.add(enemy)
+            collide_enemy.add(enemy)
+        if len(hit2) > 0:
             enemy.rect.x = -200
             all_sprites.add(enemy)
             collide_enemy.add(enemy)
@@ -222,8 +223,14 @@ while game:
         text_rect.bottomleft = (10, HEIGHT - 10)
         window.blit(text_surface, text_rect)
 
-        if VIDAS < 1:
-            game = False
+    if VIDAS<1:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    game = False
+            
 
     pygame.display.update()  # Mostra o novo frame para o jogador
 # ===== Finalização =====
