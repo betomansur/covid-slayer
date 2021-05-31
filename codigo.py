@@ -1,4 +1,5 @@
 import pygame
+import random
 
 pygame.init()
 
@@ -112,16 +113,25 @@ class inimigo(pygame.sprite.Sprite):
         # Define estado atual
         self.image = inim_img
         self.rect = self.image.get_rect()
-        self.rect.centerx = WIDTH - 20
-        self.rect.centery = HEIGHT - 40
-        self.speedx = 0
-        self.speedy = 0
+        self.rect.x = random.randint(0, WIDTH)
+        self.rect.y = random.randint(-100, HEIGHT)
+        self.speedx = random.randint(10, 12)
+        self.speedy = random.randint(10, 11)
+
     
     #inimigo se move
-    def update(self):
-        self.rect.x += 4
-        if self.rect.left > WIDTH:
-            self.rect.right = -100   
+    def update(self): 
+        self.rect.x += 10
+        if self.rect.top > HEIGHT or self.rect.right  < 0 or self.rect.left > WIDTH:
+            self.rect.x = random.randint(0, WIDTH)  
+            self.rect.y = random.randint(0,550)  
+             
+
+
+
+
+          
+          
 
 #Classe do tiro
 class Bullet(pygame.sprite.Sprite):
@@ -136,7 +146,7 @@ class Bullet(pygame.sprite.Sprite):
         # Coloca no lugar inicial definido em x, y do constutor
         self.rect.centerx = centerx
         self.rect.bottom = bottom
-        self.speedx = 20 #Velocidade fixa pro lado
+        self.speedx = 100 #Velocidade fixa pro lado
 
     def update(self):
         # A bala só se move no eixo y
@@ -158,11 +168,15 @@ all_bullets = pygame.sprite.Group()
 collide_enemy = pygame.sprite.Group()
 # Criando o jogador, inimigo e gemas
 player = jogador(jog_img, VIDAS)
-enemy = inimigo(inim_img)
+
 #Adicionando sprites em uma variável global
 all_sprites.add(player)
-all_sprites.add(enemy)
-collide_enemy.add(enemy)
+
+for i in range(0,8):
+    enemy = inimigo(inim_img)
+    all_sprites.add(enemy) 
+    collide_enemy.add(enemy)    
+  
 ###################################
 
 # ===== Loop principal =====
