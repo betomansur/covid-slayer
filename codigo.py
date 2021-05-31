@@ -14,7 +14,6 @@ pygame.display.set_caption('Covid Slay')
 #assets jogador
 JOG_WIDTH = 90
 JOG_HEIGHT = 70
-jog_img = pygame.image.load('Sprites/jogador1.png').convert_alpha()
 jog_img = pygame.transform.scale(jog_img, (JOG_WIDTH, JOG_HEIGHT))
 #assets inimigo
 inim_img = pygame.image.load('Sprites/bacteria1.png').convert_alpha()
