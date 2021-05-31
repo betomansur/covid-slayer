@@ -35,7 +35,8 @@ bg = pygame.image.load("Sprites/hospital2.png.jpg").convert_alpha()
 background = pygame.transform.scale(bg, (1000, 620))
 background_rect = background.get_rect()
 #assets do tiro
-bullet_img = pygame.image.load('Sprites\Sprites\kisspng-syringe-injection-vector-syringes-5a745917b3cd43.9846053715175744237365.jpg').convert_alpha()
+bullet_img = pygame.image.load('Sprites/vacina11111-removebg-preview.png').convert_alpha()
+bullet_img = pygame.transform.scale(bullet_img, (50, 20))
 ###FONTE DE TEXTO QUE O ANDREW TINHA DISPONIBILIZADO###
 #assets fonte de texto
 score_font = pygame.font.Font('font/PressStart2P.ttf', 28)
