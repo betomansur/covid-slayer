@@ -35,7 +35,7 @@ bg = pygame.image.load("Sprites/hospital2.png.jpg").convert_alpha()
 background = pygame.transform.scale(bg, (1000, 620))
 background_rect = background.get_rect()
 #assets do tiro
-bullet_img = pygame.image.load('Sprites/vacina11111-removebg-preview.png').convert_alpha()
+bullet_img = pygame.image.load('Sprites/seringa.png').convert_alpha()
 bullet_img = pygame.transform.scale(bullet_img, (50, 20))
 ###FONTE DE TEXTO QUE O ANDREW TINHA DISPONIBILIZADO###
 #assets fonte de texto
@@ -204,7 +204,7 @@ while game:
             all_sprites.add(enemy)
             collide_enemy.add(enemy)
 
-        
+
 
         all_sprites.update()
         collide_enemy.update()
