@@ -6,7 +6,7 @@ pygame.init()
 WIDTH = 700
 HEIGHT = 550
 window = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Pygame')
+pygame.display.set_caption('Covid Slay')
 
 
 # ----- Inicia assets
@@ -14,10 +14,9 @@ pygame.display.set_caption('Pygame')
 #assets jogador
 JOG_WIDTH = 90
 JOG_HEIGHT = 70
-jog_img = pygame.image.load('Pygame-beto-raymond-guiliermo/Sprites/gunman.png').convert_alpha()
 jog_img = pygame.transform.scale(jog_img, (JOG_WIDTH, JOG_HEIGHT))
 #assets inimigo
-inim_img = pygame.image.load('Pygame-beto-raymond-guiliermo/Sprites/bacteria1.png').convert_alpha()
+inim_img = pygame.image.load('Sprites/bacteria1.png').convert_alpha()
 inim_img = pygame.transform.scale(inim_img, (70, 70))
 #####PONTOS######
 #assets gemas
@@ -27,16 +26,16 @@ inim_img = pygame.transform.scale(inim_img, (70, 70))
 #t_gemas = [gemab_img, gemay_img, gemag_img]
 #################
 #assets chão
-chao_img = pygame.image.load("Pygame-beto-raymond-guiliermo/Sprites/plataforma.png").convert_alpha()
+chao_img = pygame.image.load("Sprites/plataforma.png").convert_alpha()
 chao_img = pygame.transform.scale(chao_img, (710, 200))
 #assets background
-bg = pygame.image.load("Pygame-beto-raymond-guiliermo/Sprites/hospital2.png.jpg")
+bg = pygame.image.load("Sprites/hospital2.png.jpg")
 #background = pygame.image.load('sprite do fundo').convert()
 background = pygame.transform.scale(bg, (700, 620))
 background_rect = background.get_rect()
 ###FONTE DE TEXTO QUE O ANDREW TINHA DISPONIBILIZADO###
 #assets fonte de texto
-score_font = pygame.font.Font('Pygame-beto-raymond-guiliermo/font/PressStart2P.ttf', 28)
+score_font = pygame.font.Font('font/PressStart2P.ttf', 28)
 
 
 ########EXTRAS#########
@@ -96,6 +95,61 @@ class jogador(pygame.sprite.Sprite):
         if self.state == STILL:
             self.speedy -= 50
             self.state = JUMPING    
+
+
+    def shoot(self):
+        # A nova bala vai ser criada logo acima e no centro horizontal da nave
+        new_bullet = Bullet(self.kisspng-syringe-injection-vector-syringes.jpg, self.rect.top, self.rect.centerx)
+        self.all_sprites.add(new_bullet)
+        self.all_bullets.add(new_bullet)
+
+class Meteor(pygame.sprite.Sprite):
+    def __init__(self, img):
+        # Construtor da classe mãe (Sprite).
+        pygame.sprite.Sprite.__init__(self)
+
+        self.image = img
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randint(0, WIDTH)
+        self.rect.y = random.randint(-100, HEIGHT)
+        self.speedx = random.randint(-3, 3)
+        self.speedy = random.randint(2, 9)
+
+    def update(self):
+        # Atualizando a posição do meteoro
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
+        # Se o meteoro passar do final da tela, volta para cima e sorteia
+        # novas posições e velocidades
+        if self.rect.top > HEIGHT or self.rect.right < 0 or self.rect.left > WIDTH:
+            self.rect.x = random.randint(0, WIDTHR_WIDTH)
+            self.rect.y = random.randint(-100, HEIGHT)
+            self.speedx = random.randint(-3, 3)
+            self.speedy = random.randint(2, 9)
+
+# Classe Bullet que representa os tiros
+class Bullet(pygame.sprite.Sprite):
+    # Construtor da classe.
+    def __init__(self, img, bottom, centerx):
+        # Construtor da classe mãe (Sprite).
+        pygame.sprite.Sprite.__init__(self)
+
+        self.image = img
+        self.rect = self.image.get_rect()
+
+        # Coloca no lugar inicial definido em x, y do constutor
+        self.rect.centerx = centerx
+        self.rect.bottom = bottom
+        self.speedy = -10  # Velocidade fixa para cima
+
+    def update(self):
+        # A bala só se move no eixo y
+        self.rect.y += self.speedy
+
+        # Se o tiro passar do inicio da tela, morre.
+        if self.rect.bottom < 0:
+            self.kill()
+
 
 #Classe do inimigo
 class inimigo(pygame.sprite.Sprite):
