@@ -32,12 +32,18 @@ inim_img = pygame.transform.scale(inim_img, (70, 70))
 chao_img = pygame.image.load("Sprites/plataforma.png").convert_alpha()
 chao_img = pygame.transform.scale(chao_img, (710, 200))
 #assets background
-bg = pygame.image.load("Sprites/hospital2.png.jpg").convert_alpha()
-background = pygame.transform.scale(bg, (1000, 620))
+
+bg = pygame.image.load("Sprites/hospital2.png.jpg").convert()
+go = pygame.image.load("Sprites/gameover.jpg").convert()
+background = pygame.transform.scale(bg, (700, 620))
 background_rect = background.get_rect()
+
+gameover = pygame.transform.scale(go, (700, 620))
 #assets do tiro
+
 bullet_img = pygame.image.load('Sprites/vacina11111-removebg-preview.png').convert_alpha()
 bullet_img = pygame.transform.scale(bullet_img, (50, 20))
+
 ###FONTE DE TEXTO QUE O ANDREW TINHA DISPONIBILIZADO###
 #assets fonte de texto
 score_font = pygame.font.Font('font/PressStart2P.ttf', 28)
@@ -241,15 +247,16 @@ while game:
         text_rect.bottomleft = (10, HEIGHT - 10)
         window.blit(text_surface, text_rect)
 
-    if VIDAS<1:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                game = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+        if VIDAS < 1:
+            window.fill((0, 0, 0))  # Preenche com a cor branca
+            window.blit(gameover, (0, 0))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
                     game = False
-            
-
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        game = False
+                        
     pygame.display.update()  # Mostra o novo frame para o jogador
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
