@@ -1,4 +1,6 @@
 import pygame
+from pygame import mixer
+
 import random
 
 pygame.init()
@@ -8,7 +10,6 @@ WIDTH = 1000
 HEIGHT = 550
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Pygame')
-
 
 # ----- Inicia assets
 ##Os nomes das variáveis está em uma mistura de português e inglês##
@@ -39,6 +40,8 @@ background = pygame.transform.scale(bg, (1000, 550))
 background_rect = background.get_rect()
 
 gameover = pygame.transform.scale(go, (1000, 550))
+flo = pygame.image.load('Sprites\cenario-vazio-do-parque-natural-do-fundo_1308-44780.jpg').convert()
+floresta = pygame.transform.scale(flo, (1000, 550))
 #assets do tiro
 
 bullet_img = pygame.image.load('Sprites/seringa.png').convert_alpha()
@@ -167,8 +170,8 @@ class inimigo(pygame.sprite.Sprite):
 
     
     #inimigo se move
-    def update(self): 
-        self.rect.x += 10  
+    def update(self):  
+        self.rect.x += 6  
         if self.rect.top > HEIGHT or self.rect.right  < 0 or self.rect.left > WIDTH:
             self.rect.x = random.randint(0, 70)  
             self.rect.y = random.randint(20,550)  
@@ -212,12 +215,12 @@ FPS = 20
 all_sprites = pygame.sprite.Group()
 all_bullets = pygame.sprite.Group()
 collide_enemy = pygame.sprite.Group()
-# Criando o jogador, inimigo e gemas
+# Criando o jogador, inimigo e gemasaaaaa
 player = jogador(jog_img, VIDAS)
 player2 = jogador2(jog_img, VIDAS2)
 all_sprites.add(player)
 
-for i in range(0,8):
+for i in range(0,10):
     enemy = inimigo(inim_img)
     all_sprites.add(enemy) 
     collide_enemy.add(enemy)   
@@ -368,6 +371,14 @@ while game==True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game = False
+
+    if PONTOS == 200:
+        window.fill((0, 0, 0))  # Preenche com a cor branca
+        window.blit(floresta, (0, 0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game = False  
+
                         
     pygame.display.update()  # Mostra o novo frame para o jogador
 # ===== Finalização =====
