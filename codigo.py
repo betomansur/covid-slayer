@@ -41,7 +41,7 @@ background_rect = background.get_rect()
 gameover = pygame.transform.scale(go, (1000, 550))
 #assets do tiro
 
-bullet_img = pygame.image.load('Sprites/vacina11111-removebg-preview.png').convert_alpha()
+bullet_img = pygame.image.load('Sprites/seringa.png').convert_alpha()
 bullet_img = pygame.transform.scale(bullet_img, (50, 20))
 
 ###FONTE DE TEXTO QUE O ANDREW TINHA DISPONIBILIZADO###
@@ -168,10 +168,10 @@ class inimigo(pygame.sprite.Sprite):
     
     #inimigo se move
     def update(self): 
-        self.rect.x += 10
+        self.rect.x += 10  
         if self.rect.top > HEIGHT or self.rect.right  < 0 or self.rect.left > WIDTH:
             self.rect.x = random.randint(0, 70)  
-            self.rect.y = random.randint(  20,550)  
+            self.rect.y = random.randint(20,550)  
              
 
 
@@ -182,7 +182,7 @@ class inimigo(pygame.sprite.Sprite):
 
 #Classe do tiro
 class Bullet(pygame.sprite.Sprite):
-    # Construtor da classe.
+    # Construtor da classe.nem
     def __init__(self, assets, bottom, centerx):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -332,10 +332,12 @@ while game==True:
             enemy.rect.x = -200
             all_sprites.add(enemy)
             collide_enemy.add(enemy)
+            PONTOS+=10
         if len(hit2) > 0:
             enemy.rect.x = -200
             all_sprites.add(enemy)
             collide_enemy.add(enemy)
+            PONTOS+=10
 
 
 
