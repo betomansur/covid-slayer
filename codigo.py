@@ -35,10 +35,10 @@ chao_img = pygame.transform.scale(chao_img, (710, 200))
 
 bg = pygame.image.load("Sprites/hospital2.png.jpg").convert()
 go = pygame.image.load("Sprites/gameover.jpg").convert()
-background = pygame.transform.scale(bg, (700, 620))
+background = pygame.transform.scale(bg, (1000, 550))
 background_rect = background.get_rect()
 
-gameover = pygame.transform.scale(go, (700, 620))
+gameover = pygame.transform.scale(go, (1000, 550))
 #assets do tiro
 
 bullet_img = pygame.image.load('Sprites/vacina11111-removebg-preview.png').convert_alpha()
@@ -119,8 +119,8 @@ class inimigo(pygame.sprite.Sprite):
         # Define estado atual
         self.image = inim_img
         self.rect = self.image.get_rect()
-        self.rect.x = random.randint(0, WIDTH)
-        self.rect.y = random.randint(-100, HEIGHT)
+        self.rect.x = random.randint(0, 70)
+        self.rect.y = random.randint(-20, HEIGHT)
         self.speedx = random.randint(10, 12)
         self.speedy = random.randint(10, 11)
 
@@ -129,8 +129,8 @@ class inimigo(pygame.sprite.Sprite):
     def update(self): 
         self.rect.x += 10
         if self.rect.top > HEIGHT or self.rect.right  < 0 or self.rect.left > WIDTH:
-            self.rect.x = random.randint(0, WIDTH)  
-            self.rect.y = random.randint(0,550)  
+            self.rect.x = random.randint(0, 70)  
+            self.rect.y = random.randint(  20,550)  
              
 
 
@@ -247,15 +247,12 @@ while game:
         text_rect.bottomleft = (10, HEIGHT - 10)
         window.blit(text_surface, text_rect)
 
-        if VIDAS < 1:
-            window.fill((0, 0, 0))  # Preenche com a cor branca
-            window.blit(gameover, (0, 0))
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    game = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        game = False
+    if VIDAS < 1:
+        window.fill((0, 0, 0))  # Preenche com a cor branca
+        window.blit(gameover, (0, 0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game = False
                         
     pygame.display.update()  # Mostra o novo frame para o jogador
 # ===== Finalização =====
