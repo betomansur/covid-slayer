@@ -15,10 +15,10 @@ pygame.display.set_caption('Pygame')
 JOG_WIDTH = 90
 JOG_HEIGHT = 70
 
-jog_img = pygame.image.load('Pygame-beto-raymond-guiliermo/Sprites/gunman.png').convert_alpha()
+jog_img = pygame.image.load('Sprites/gunman.png').convert_alpha()
 jog_img = pygame.transform.scale(jog_img, (JOG_WIDTH, JOG_HEIGHT))
 #assets inimigo
-inim_img = pygame.image.load('Pygame-beto-raymond-guiliermo/Sprites/bacteria1.png').convert_alpha()
+inim_img = pygame.image.load('Sprites/bacteria1.png').convert_alpha()
 inim_img = pygame.transform.scale(inim_img, (70, 70))
 #####PONTOS######
 #assets gemas
@@ -28,20 +28,20 @@ inim_img = pygame.transform.scale(inim_img, (70, 70))
 #t_gemas = [gemab_img, gemay_img, gemag_img]
 #################
 #assets chão
-chao_img = pygame.image.load("Pygame-beto-raymond-guiliermo/Sprites/plataforma.png").convert_alpha()
+chao_img = pygame.image.load("Sprites/plataforma.png").convert_alpha()
 chao_img = pygame.transform.scale(chao_img, (710, 200))
 #assets background
-bg = pygame.image.load("Pygame-beto-raymond-guiliermo/Sprites/hospital2.png.jpg").convert()
-go = pygame.image.load("Pygame-beto-raymond-guiliermo/Sprites/gameover.jpg").convert()
+bg = pygame.image.load("Sprites/hospital2.png.jpg").convert()
+go = pygame.image.load("Sprites/gameover.jpg").convert()
 background = pygame.transform.scale(bg, (700, 620))
 background_rect = background.get_rect()
 
 gameover = pygame.transform.scale(go, (700, 620))
 #assets do tiro
-bullet_img = pygame.image.load('Pygame-beto-raymond-guiliermo/Sprites/laserRed16.png').convert_alpha()
+bullet_img = pygame.image.load('Sprites/laserRed16.png').convert_alpha()
 ###FONTE DE TEXTO QUE O ANDREW TINHA DISPONIBILIZADO###
 #assets fonte de texto
-score_font = pygame.font.Font('Pygame-beto-raymond-guiliermo/font/PressStart2P.ttf', 28)
+score_font = pygame.font.Font('font/PressStart2P.ttf', 28)
 
 
 ########EXTRAS#########
