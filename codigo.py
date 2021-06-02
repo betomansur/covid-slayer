@@ -50,13 +50,13 @@ JUMPING = 1
 GRAVITY = 6
 PONTOS = 0
 VIDAS = 3
+VIDAS2= 3
 #######################
 
-#Cl asse do jogador
+#Classe do jogador
 class jogador(pygame.sprite.Sprite):
     def __init__(self, jog_img, VIDAS):
         pygame.sprite.Sprite.__init__(self)
-
         # Define estado atual
         # Usamos o estado para decidir se o jogador pode ou não pular
         self.state = STILL
@@ -70,16 +70,13 @@ class jogador(pygame.sprite.Sprite):
         self.sprites = all_sprites
         self.bullets = all_bullets
         self.tiro  = bullet_img
-    
     def update(self):
-
         #Movimentação em y
         self.speedy += GRAVITY
         #Atualiza a posição y
         self.rect.y += self.speedy
         #Atualiza a posição x
         self.rect.x += self.speedx
-        
         #Corrige a posição para não sair da janela
         if self.rect.left < 0:
             self.rect.left = 0
@@ -89,20 +86,64 @@ class jogador(pygame.sprite.Sprite):
             self.rect.bottom = HEIGHT
             self.speedy = 0
             self.state = STILL
-
     #Método que faz o personagem pular
     def jump(self):
         #Só pode pular se ainda não estiver pulando ou caindo
         if self.state == STILL:
             self.speedy -= 50
             self.state = JUMPING    
-
     #Função do tiro
     def shoot(self):
         # A nova bala vai ser criada logo acima e no centro horizontal da nave
         new_bullet = Bullet(self.tiro, self.rect.centery, self.rect.centerx+40)
         self.bullets.add(new_bullet)
         self.sprites.add(new_bullet)
+
+class jogador2(pygame.sprite.Sprite):
+    def __init__(self, jog_img, VIDAS):
+        pygame.sprite.Sprite.__init__(self)
+        # Define estado atual
+        # Usamos o estado para decidir se o jogador pode ou não pular
+        self.state = STILL
+        self.image = jog_img
+        self.rect = self.image.get_rect()
+        self.rect.centerx = 400
+        self.rect.bottom = HEIGHT-20
+        self.speedx = 0
+        self.speedy = 0
+        self.lifes = VIDAS
+        self.sprites = all_sprites
+        self.bullets = all_bullets
+        self.tiro  = bullet_img
+    def update(self):
+        #Movimentação em y
+        self.speedy += GRAVITY
+        #Atualiza a posição y
+        self.rect.y += self.speedy
+        #Atualiza a posição x
+        self.rect.x += self.speedx
+        #Corrige a posição para não sair da janela
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right >= WIDTH:
+            self.rect.right = WIDTH - 4
+        if self.rect.bottom > HEIGHT:
+            self.rect.bottom = HEIGHT
+            self.speedy = 0
+            self.state = STILL
+    #Método que faz o personagem pular
+    def jump(self):
+        #Só pode pular se ainda não estiver pulando ou caindo
+        if self.state == STILL:
+            self.speedy -= 50
+            self.state = JUMPING    
+    #Função do tiro
+    def shoot(self):
+        # A nova bala vai ser criada logo acima e no centro horizontal da nave
+        new_bullet = Bullet(self.tiro, self.rect.centery, self.rect.centerx+40)
+        self.bullets.add(new_bullet)
+        self.sprites.add(new_bullet)
+
 
 #Classe do inimigo
 class inimigo(pygame.sprite.Sprite):
@@ -151,27 +192,81 @@ game = True
 tempo = pygame.time.Clock()
 FPS = 20
 
-#############COLISõES#############
 #Cria grupos com as sprites e collides
 all_sprites = pygame.sprite.Group()
 all_bullets = pygame.sprite.Group()
 collide_enemy = pygame.sprite.Group()
 # Criando o jogador, inimigo e gemas
 player = jogador(jog_img, VIDAS)
+player2 = jogador2(jog_img, VIDAS2)
 enemy = inimigo(inim_img)
-#Adicionando sprites em uma variável global
 all_sprites.add(player)
 all_sprites.add(enemy)
 collide_enemy.add(enemy)
-###################################
+
+#------ Tela de inicio
+game=False
+tela_inicial = True
+while tela_inicial:
+    # ----- Gera saídas
+    window.blit(background, (0, 0))
+    pygame.draw.rect(window, (0,0,0), [335, 250, 350, 60]) #[eixox, eixoy, raio, grossura]
+    pygame.draw.rect(window, (0,0,0), [335, 320, 350, 60])
+    pygame.draw.rect(window, (0,0,0), [335, 390, 350, 60])
+    #Desenha nome do jogo
+    text_inic = score_font.render("Covid Slay", True, (255, 0, 0))
+    text_inic_rect = text_inic.get_rect()
+    text_inic_rect.midtop = (500,  160)
+    window.blit(text_inic, text_inic_rect)
+    #Opção 1 jogador
+    text_inic = score_font.render("1 Jogador", True, (255, 0, 0))
+    text_inic_rect = text_inic.get_rect()
+    text_inic_rect.midtop = (510,  270)
+    window.blit(text_inic, text_inic_rect)
+    #Opção 2 jogadores
+    text_inic = score_font.render("2 Jogadores", True, (255, 0, 0))
+    text_inic_rect = text_inic.get_rect()
+    text_inic_rect.midtop = (510,  340)
+    window.blit(text_inic, text_inic_rect)
+    #Créditos 
+    text_inic = score_font.render("Créditos", True, (255, 0, 0))
+    text_inic_rect = text_inic.get_rect()
+    text_inic_rect.midtop = (510,  410)
+    window.blit(text_inic, text_inic_rect)
+    # ----- Trata eventos
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+                tela_inicial = False
+        if event.type == pygame.MOUSEBUTTONDOWN: 
+            if pygame.mouse.get_pressed():
+                print(pygame.mouse.get_pos())
+                if pygame.mouse.get_pos()[0]>=334 and pygame.mouse.get_pos()[0]<=683 and pygame.mouse.get_pos()[1]>=251 and pygame.mouse.get_pos()[1]<=308:
+                    tela_inicial = False
+                    game = True  
+                    jogo = 1
+                elif pygame.mouse.get_pos()[0]>=334 and pygame.mouse.get_pos()[0]<=683 and pygame.mouse.get_pos()[1]>=322 and pygame.mouse.get_pos()[1]<=375:
+                    tela_inicial = False
+                    game = True
+                    jogo = 2
+                #elif pygame.mouse.get_pos()[0]>=334 and pygame.mouse.get_pos()[0]<=683 and pygame.mouse.get_pos()[1]>=391 and pygame.mouse.get_pos()[1]<=449:
+                    #tela_inicial = False
+                    #game = True
+#WIDTH = 1000
+#HEIGHT = 550
+    pygame.display.update()
+
+#Verifica se são 2 jogadores
+if jogo == 2:
+    all_sprites.add(player2)
 
 # ===== Loop principal =====
-while game:
+while game==True:
+
     if VIDAS > 0:
         tempo.tick(FPS)
-
         # ----- Trata eventos
         for event in pygame.event.get():
+            ########Teclas jogador 1#########
             # ----- Verifica consequências
             if event.type == pygame.QUIT:
                 game = False
@@ -190,6 +285,26 @@ while game:
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     player.speedx = 0
+            
+            #############Teclas jogador 2##############
+            # ----- Verifica consequências
+            if event.type == pygame.QUIT:
+                game = False
+            # Verifica se apertou alguma tecla.
+            if event.type == pygame.KEYDOWN:
+                # Dependendo da tecla, altera a velocidade.
+                if event.key == pygame.K_a:
+                    player2.speedx -= 8
+                if event.key == pygame.K_d:
+                    player2.speedx += 8
+                if event.key == pygame.K_w:
+                    player2.jump()
+                if event.key == pygame.K_q:
+                    player2.shoot()
+            # Verifica se soltou alguma tecla.
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_a or event.key == pygame.K_d:
+                    player2.speedx = 0
 
         hits = pygame.sprite.spritecollide(player, collide_enemy, True, pygame.sprite.collide_mask)
         hit2 = pygame.sprite.groupcollide(all_bullets, collide_enemy, True, True)
