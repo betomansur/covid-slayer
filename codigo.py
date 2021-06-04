@@ -7,49 +7,31 @@ pygame.init()
 WIDTH = 1000
 HEIGHT = 550
 window = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Pygame')
-
+pygame.display.set_caption('Covid Slayer')
 
 # ----- Inicia assets
 ##Os nomes das variáveis está em uma mistura de português e inglês##
 #assets jogador
-JOG_WIDTH = 90
-JOG_HEIGHT = 70
-
 jog_img = pygame.image.load('Sprites/gunman.png').convert_alpha()
-jog_img = pygame.transform.scale(jog_img, (JOG_WIDTH, JOG_HEIGHT))
+jog_img = pygame.transform.scale(jog_img, (90, 70))
 #assets inimigo
 inim_img = pygame.image.load('Sprites/bacteria1.png').convert_alpha()
 inim_img = pygame.transform.scale(inim_img, (70, 70))
-#####PONTOS######
-#assets gemas
-#gemab_img = pygame.image.load('img/gemas/hab b.png').convert_alpha()
-#gemay_img = pygame.image.load('img/gemas/hab y.png').convert_alpha()
-#gemag_img = pygame.image.load('img/gemas/hab g.png').convert_alpha()
-#t_gemas = [gemab_img, gemay_img, gemag_img]
-#################
-#assets chão
-chao_img = pygame.image.load("Sprites/plataforma.png").convert_alpha()
-chao_img = pygame.transform.scale(chao_img, (710, 200))
 #assets background
-
-bg = pygame.image.load("Sprites/hospital2.png.jpg").convert()
-go = pygame.image.load("Sprites/gameover.jpg").convert()
+bg = pygame.image.load("Sprites/hospital.jpg").convert()
 background = pygame.transform.scale(bg, (1000, 550))
 background_rect = background.get_rect()
-
+#Tela de fim de jogo
+go = pygame.image.load("Sprites/gameover.jpg").convert()
 gameover = pygame.transform.scale(go, (1000, 550))
 #assets do tiro
-
 bullet_img = pygame.image.load('Sprites/seringa.png').convert_alpha()
 bullet_img = pygame.transform.scale(bullet_img, (50, 20))
-
 ###FONTE DE TEXTO QUE O ANDREW TINHA DISPONIBILIZADO###
 #assets fonte de texto
 score_font = pygame.font.Font('font/PressStart2P.ttf', 28)
 
-
-########EXTRAS#########
+##########EXTRAS###########
 # Define estados possíveis do jogador
 STILL = 0
 JUMPING = 1
@@ -58,7 +40,7 @@ GRAVITY = 6
 PONTOS = 0
 VIDAS = 3
 VIDAS2= 0
-#######################
+###########################
 
 #Classe do jogador
 class jogador(pygame.sprite.Sprite):
@@ -106,6 +88,7 @@ class jogador(pygame.sprite.Sprite):
         self.bullets.add(new_bullet)
         self.sprites.add(new_bullet)
 
+#Classe do jogador 2
 class jogador2(pygame.sprite.Sprite):
     def __init__(self, jog_img, VIDAS):
         pygame.sprite.Sprite.__init__(self)
@@ -156,7 +139,6 @@ class jogador2(pygame.sprite.Sprite):
 class inimigo(pygame.sprite.Sprite):
     def __init__(self, inim_img):
         pygame.sprite.Sprite.__init__(self)
-        
         # Define estado atual
         self.image = inim_img
         self.rect = self.image.get_rect()
@@ -164,8 +146,6 @@ class inimigo(pygame.sprite.Sprite):
         self.rect.y = random.randint(-100, HEIGHT)
         self.speedx = random.randint(10, 12)
         self.speedy = random.randint(10, 11)
-
-    
     #inimigo se move
     def update(self): 
         self.rect.x += 10
@@ -173,30 +153,26 @@ class inimigo(pygame.sprite.Sprite):
             self.rect.x = random.randint(0, WIDTH)  
             self.rect.y = random.randint(0,550)            
           
-
 #Classe do tiro
 class Bullet(pygame.sprite.Sprite):
     # Construtor da classe.
     def __init__(self, assets, bottom, centerx):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
-
         self.image = bullet_img
         self.rect = self.image.get_rect()
-
         # Coloca no lugar inicial definido em x, y do constutor
         self.rect.centerx = centerx
         self.rect.bottom = bottom
         self.speedx = 100 #Velocidade fixa pro lado
-
     def update(self):
         # A bala só se move no eixo y
         self.rect.x += self.speedx
-
         # Se o tiro passar do inicio da tela, morre.
         if self.rect.left > WIDTH:
             self.kill()
 
+#########################################################################
 game = True
 #Cria um relógio que conta o tempo em jogo
 tempo = pygame.time.Clock()
@@ -206,11 +182,10 @@ FPS = 20
 all_sprites = pygame.sprite.Group()
 all_bullets = pygame.sprite.Group()
 collide_enemy = pygame.sprite.Group()
-# Criando o jogador, inimigo e gemas
+# Criando o jogador e inimigo
 player = jogador(jog_img, VIDAS)
 player2 = jogador2(jog_img, VIDAS2)
 all_sprites.add(player)
-
 for i in range(0,8):
     enemy = inimigo(inim_img)
     all_sprites.add(enemy) 
@@ -220,9 +195,9 @@ for i in range(0,8):
 game=False
 tela_inicial = True
 while tela_inicial:
-    # ----- Gera saídas
     window.blit(background, (0, 0))
-    pygame.draw.rect(window, (0,0,0), [335, 250, 350, 60]) #[eixox, eixoy, raio, grossura]
+    #(janela, (cor,cor,cor), [eixox, eixoy, raio, grossura])
+    pygame.draw.rect(window, (0,0,0), [335, 250, 350, 60]) 
     pygame.draw.rect(window, (0,0,0), [335, 320, 350, 60])
     pygame.draw.rect(window, (0,0,0), [335, 390, 350, 60])
     #Desenha nome do jogo
@@ -251,14 +226,17 @@ while tela_inicial:
                 tela_inicial = False
         if event.type == pygame.MOUSEBUTTONDOWN: 
             if pygame.mouse.get_pressed():
+                #Caso aperte 1 jogador
                 if pygame.mouse.get_pos()[0]>=334 and pygame.mouse.get_pos()[0]<=683 and pygame.mouse.get_pos()[1]>=251 and pygame.mouse.get_pos()[1]<=308:
                     tela_inicial = False
                     game = True  
                     jogo = 1
+                #Caso aperte 2 jogadores
                 elif pygame.mouse.get_pos()[0]>=334 and pygame.mouse.get_pos()[0]<=683 and pygame.mouse.get_pos()[1]>=322 and pygame.mouse.get_pos()[1]<=375:
                     tela_inicial = False
                     game = True
                     jogo = 2
+                #Caso aperte créditos
                 #elif pygame.mouse.get_pos()[0]>=334 and pygame.mouse.get_pos()[0]<=683 and pygame.mouse.get_pos()[1]>=391 and pygame.mouse.get_pos()[1]<=449:
                     #tela_inicial = False
                     #game = True
@@ -268,6 +246,7 @@ while tela_inicial:
 if jogo == 2:
     VIDAS2 = 3
     all_sprites.add(player2)
+
 # ===== Loop principal =====
 while game==True:
     if VIDAS > 0 or VIDAS2 > 0:
@@ -278,7 +257,6 @@ while game==True:
             # ----- Verifica consequências
             if event.type == pygame.QUIT:
                 game = False
-            # Verifica se apertou alguma tecla.
             if event.type == pygame.KEYDOWN:
                 # Dependendo da tecla, altera a velocidade.
                 if event.key == pygame.K_LEFT:
@@ -315,16 +293,9 @@ while game==True:
                     if event.key == pygame.K_a or event.key == pygame.K_d:
                         player2.speedx = 0
 
+        #Colisões
         hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, True, pygame.sprite.collide_mask)
         hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, True, True)
-
-        if jogo == 2:
-            hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True, pygame.sprite.collide_mask)
-            if len(hits_jog2) > 0:
-                VIDAS2 -= 1
-                enemy.rect.x = -200
-                all_sprites.add(enemy)
-                collide_enemy.add(enemy)
         if len(hits_jog1) > 0:
             VIDAS -= 1
             enemy.rect.x = -200
@@ -334,13 +305,19 @@ while game==True:
             enemy.rect.x = -200
             all_sprites.add(enemy)
             collide_enemy.add(enemy)
+        if jogo == 2:
+            hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True, pygame.sprite.collide_mask)
+            if len(hits_jog2) > 0:
+                VIDAS2 -= 1
+                enemy.rect.x = -200
+                all_sprites.add(enemy)
+                collide_enemy.add(enemy)
 
-
-
+        #Atualiza sprites
         all_sprites.update()
         collide_enemy.update()
         # ----- Gera saídas
-        window.fill((0, 0, 0))  # Preenche com a cor branca
+        window.fill((0, 0, 0))  # Preenche com a cor preto
         window.blit(background, (0, 0))
         # Desenhando as sprites
         all_sprites.draw(window)
@@ -361,7 +338,8 @@ while game==True:
             text_rect2 = text_surface.get_rect()
             text_rect2.bottomleft = (WIDTH -100, HEIGHT - 10)
             window.blit(text_surface2, text_rect2)
-        
+    
+    #Verifica se o jogo acabou
     if jogo == 1:
         if VIDAS<1:
             window.fill((0, 0, 0))  # Preenche com a cor preto
