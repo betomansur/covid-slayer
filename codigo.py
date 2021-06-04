@@ -1,4 +1,5 @@
 import pygame
+import random
 
 pygame.init()
 
@@ -31,12 +32,18 @@ inim_img = pygame.transform.scale(inim_img, (70, 70))
 chao_img = pygame.image.load("Sprites/plataforma.png").convert_alpha()
 chao_img = pygame.transform.scale(chao_img, (710, 200))
 #assets background
-bg = pygame.image.load("Sprites/hospital2.png.jpg").convert_alpha()
-background = pygame.transform.scale(bg, (1000, 620))
+
+bg = pygame.image.load("Sprites/hospital2.png.jpg").convert()
+go = pygame.image.load("Sprites/gameover.jpg").convert()
+background = pygame.transform.scale(bg, (700, 620))
 background_rect = background.get_rect()
+
+gameover = pygame.transform.scale(go, (700, 620))
 #assets do tiro
-bullet_img = pygame.image.load('Sprites/seringa.png').convert_alpha()
+
+bullet_img = pygame.image.load('Sprites/vacina11111-removebg-preview.png').convert_alpha()
 bullet_img = pygame.transform.scale(bullet_img, (50, 20))
+
 ###FONTE DE TEXTO QUE O ANDREW TINHA DISPONIBILIZADO###
 #assets fonte de texto
 score_font = pygame.font.Font('font/PressStart2P.ttf', 28)
@@ -153,16 +160,19 @@ class inimigo(pygame.sprite.Sprite):
         # Define estado atual
         self.image = inim_img
         self.rect = self.image.get_rect()
-        self.rect.centerx = WIDTH - 20
-        self.rect.centery = HEIGHT - 40
-        self.speedx = 0
-        self.speedy = 0
+        self.rect.x = random.randint(0, WIDTH)
+        self.rect.y = random.randint(-100, HEIGHT)
+        self.speedx = random.randint(10, 12)
+        self.speedy = random.randint(10, 11)
+
     
     #inimigo se move
-    def update(self):
-        self.rect.x += 4
-        if self.rect.left > WIDTH:
-            self.rect.right = -100   
+    def update(self): 
+        self.rect.x += 10
+        if self.rect.top > HEIGHT or self.rect.right  < 0 or self.rect.left > WIDTH:
+            self.rect.x = random.randint(0, WIDTH)  
+            self.rect.y = random.randint(0,550)            
+          
 
 #Classe do tiro
 class Bullet(pygame.sprite.Sprite):
@@ -177,7 +187,7 @@ class Bullet(pygame.sprite.Sprite):
         # Coloca no lugar inicial definido em x, y do constutor
         self.rect.centerx = centerx
         self.rect.bottom = bottom
-        self.speedx = 20 #Velocidade fixa pro lado
+        self.speedx = 100 #Velocidade fixa pro lado
 
     def update(self):
         # A bala só se move no eixo y
@@ -199,10 +209,12 @@ collide_enemy = pygame.sprite.Group()
 # Criando o jogador, inimigo e gemas
 player = jogador(jog_img, VIDAS)
 player2 = jogador2(jog_img, VIDAS2)
-enemy = inimigo(inim_img)
 all_sprites.add(player)
-all_sprites.add(enemy)
-collide_enemy.add(enemy)
+
+for i in range(0,8):
+    enemy = inimigo(inim_img)
+    all_sprites.add(enemy) 
+    collide_enemy.add(enemy)   
 
 #------ Tela de inicio
 game=False
@@ -256,7 +268,6 @@ while tela_inicial:
 if jogo == 2:
     VIDAS2 = 3
     all_sprites.add(player2)
-
 # ===== Loop principal =====
 while game==True:
     if VIDAS > 0 or VIDAS2 > 0:
@@ -353,6 +364,8 @@ while game==True:
         
     if jogo == 1:
         if VIDAS<1:
+            window.fill((0, 0, 0))  # Preenche com a cor preto
+            window.blit(gameover, (0, 0))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     game = False
@@ -365,14 +378,14 @@ while game==True:
         elif VIDAS2<1:
             all_sprites.remove(player2)
         if VIDAS<1 and VIDAS2<1:
+            window.fill((0, 0, 0))  # Preenche com a cor preto
+            window.blit(gameover, (0, 0))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     game = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         game = False
-
-            
 
     pygame.display.update()  # Mostra o novo frame para o jogador
 # ===== Finalização =====
