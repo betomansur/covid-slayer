@@ -50,7 +50,7 @@ JUMPING = 1
 GRAVITY = 6
 PONTOS = 0
 VIDAS = 3
-VIDAS2= 3
+VIDAS2= 0
 #######################
 
 #Classe do jogador
@@ -239,7 +239,6 @@ while tela_inicial:
                 tela_inicial = False
         if event.type == pygame.MOUSEBUTTONDOWN: 
             if pygame.mouse.get_pressed():
-                print(pygame.mouse.get_pos())
                 if pygame.mouse.get_pos()[0]>=334 and pygame.mouse.get_pos()[0]<=683 and pygame.mouse.get_pos()[1]>=251 and pygame.mouse.get_pos()[1]<=308:
                     tela_inicial = False
                     game = True  
@@ -251,18 +250,16 @@ while tela_inicial:
                 #elif pygame.mouse.get_pos()[0]>=334 and pygame.mouse.get_pos()[0]<=683 and pygame.mouse.get_pos()[1]>=391 and pygame.mouse.get_pos()[1]<=449:
                     #tela_inicial = False
                     #game = True
-#WIDTH = 1000
-#HEIGHT = 550
     pygame.display.update()
 
 #Verifica se são 2 jogadores
 if jogo == 2:
+    VIDAS2 = 3
     all_sprites.add(player2)
 
 # ===== Loop principal =====
 while game==True:
-
-    if VIDAS > 0:
+    if VIDAS > 0 or VIDAS2 > 0:
         tempo.tick(FPS)
         # ----- Trata eventos
         for event in pygame.event.get():
@@ -285,36 +282,44 @@ while game==True:
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     player.speedx = 0
-            
-            #############Teclas jogador 2##############
-            # ----- Verifica consequências
-            if event.type == pygame.QUIT:
-                game = False
-            # Verifica se apertou alguma tecla.
-            if event.type == pygame.KEYDOWN:
-                # Dependendo da tecla, altera a velocidade.
-                if event.key == pygame.K_a:
-                    player2.speedx -= 8
-                if event.key == pygame.K_d:
-                    player2.speedx += 8
-                if event.key == pygame.K_w:
-                    player2.jump()
-                if event.key == pygame.K_q:
-                    player2.shoot()
-            # Verifica se soltou alguma tecla.
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_a or event.key == pygame.K_d:
-                    player2.speedx = 0
 
-        hits = pygame.sprite.spritecollide(player, collide_enemy, True, pygame.sprite.collide_mask)
-        hit2 = pygame.sprite.groupcollide(all_bullets, collide_enemy, True, True)
+            if jogo ==2:
+                #############Teclas jogador 2##############
+                # ----- Verifica consequências
+                if event.type == pygame.QUIT:
+                    game = False
+                # Verifica se apertou alguma tecla.
+                if event.type == pygame.KEYDOWN:
+                    # Dependendo da tecla, altera a velocidade.
+                    if event.key == pygame.K_a:
+                        player2.speedx -= 8
+                    if event.key == pygame.K_d:
+                        player2.speedx += 8
+                    if event.key == pygame.K_w:
+                        player2.jump()
+                    if event.key == pygame.K_q:
+                        player2.shoot()
+                # Verifica se soltou alguma tecla.
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_a or event.key == pygame.K_d:
+                        player2.speedx = 0
 
-        if len(hits) > 0:
+        hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, True, pygame.sprite.collide_mask)
+        hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, True, True)
+
+        if jogo == 2:
+            hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True, pygame.sprite.collide_mask)
+            if len(hits_jog2) > 0:
+                VIDAS2 -= 1
+                enemy.rect.x = -200
+                all_sprites.add(enemy)
+                collide_enemy.add(enemy)
+        if len(hits_jog1) > 0:
             VIDAS -= 1
             enemy.rect.x = -200
             all_sprites.add(enemy)
             collide_enemy.add(enemy)
-        if len(hit2) > 0:
+        if len(hit_tiro) > 0:
             enemy.rect.x = -200
             all_sprites.add(enemy)
             collide_enemy.add(enemy)
@@ -329,7 +334,6 @@ while game==True:
         # Desenhando as sprites
         all_sprites.draw(window)
         
-
         # Desenhando o score
         text_surface = score_font.render("{:06d}".format(PONTOS), True, (255, 0, 200))
         text_rect = text_surface.get_rect()
@@ -341,14 +345,33 @@ while game==True:
         text_rect = text_surface.get_rect()
         text_rect.bottomleft = (10, HEIGHT - 10)
         window.blit(text_surface, text_rect)
-
-    if VIDAS<1:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                game = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+        if jogo == 2:
+            text_surface2 = score_font.render(chr(9829) * VIDAS2, True, (255, 0, 0))
+            text_rect2 = text_surface.get_rect()
+            text_rect2.bottomleft = (WIDTH -100, HEIGHT - 10)
+            window.blit(text_surface2, text_rect2)
+        
+    if jogo == 1:
+        if VIDAS<1:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
                     game = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        game = False
+    else:
+        if VIDAS<1:
+            all_sprites.remove(player)
+        elif VIDAS2<1:
+            all_sprites.remove(player2)
+        if VIDAS<1 and VIDAS2<1:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    game = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        game = False
+
             
 
     pygame.display.update()  # Mostra o novo frame para o jogador
