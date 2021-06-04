@@ -35,13 +35,13 @@ chao_img = pygame.transform.scale(chao_img, (710, 200))
 
 bg = pygame.image.load("Sprites/hospital2.png.jpg").convert()
 go = pygame.image.load("Sprites/gameover.jpg").convert()
-background = pygame.transform.scale(bg, (700, 620))
+background = pygame.transform.scale(bg, (1000, 550))
 background_rect = background.get_rect()
 
-gameover = pygame.transform.scale(go, (700, 620))
+gameover = pygame.transform.scale(go, (1000, 550))
 #assets do tiro
 
-bullet_img = pygame.image.load('Sprites/vacina11111-removebg-preview.png').convert_alpha()
+bullet_img = pygame.image.load('Sprites/seringa.png').convert_alpha()
 bullet_img = pygame.transform.scale(bullet_img, (50, 20))
 
 ###FONTE DE TEXTO QUE O ANDREW TINHA DISPONIBILIZADO###
