@@ -1,4 +1,6 @@
 import pygame
+from pygame import mixer
+
 import random
 
 pygame.init()
@@ -24,6 +26,9 @@ background_rect = background.get_rect()
 #Tela de fim de jogo
 go = pygame.image.load("Sprites/gameover.jpg").convert()
 gameover = pygame.transform.scale(go, (1000, 550))
+#Tela 2 de jogo
+flo = pygame.image.load('Sprites\cenario-vazio-do-parque-natural-do-fundo_1308-44780.jpg').convert()
+floresta = pygame.transform.scale(flo, (1000, 550))
 #assets do tiro
 bullet_img = pygame.image.load('Sprites/seringa.png').convert_alpha()
 bullet_img = pygame.transform.scale(bullet_img, (50, 20))
@@ -142,20 +147,20 @@ class inimigo(pygame.sprite.Sprite):
         # Define estado atual
         self.image = inim_img
         self.rect = self.image.get_rect()
-        self.rect.x = random.randint(0, WIDTH)
-        self.rect.y = random.randint(-100, HEIGHT)
+        self.rect.x = random.randint(0, 70)
+        self.rect.y = random.randint(-20, HEIGHT)
         self.speedx = random.randint(10, 12)
         self.speedy = random.randint(10, 11)
     #inimigo se move
-    def update(self): 
-        self.rect.x += 10
+    def update(self):  
+        self.rect.x += 6  
         if self.rect.top > HEIGHT or self.rect.right  < 0 or self.rect.left > WIDTH:
             self.rect.x = random.randint(0, WIDTH)  
-            self.rect.y = random.randint(0,550)            
+            self.rect.y = random.randint(0,550)
           
 #Classe do tiro
 class Bullet(pygame.sprite.Sprite):
-    # Construtor da classe.
+    # Construtor da classe.nem
     def __init__(self, assets, bottom, centerx):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -182,6 +187,7 @@ FPS = 20
 all_sprites = pygame.sprite.Group()
 all_bullets = pygame.sprite.Group()
 collide_enemy = pygame.sprite.Group()
+
 # Criando o jogador e inimigo
 player = jogador(jog_img, VIDAS)
 player2 = jogador2(jog_img, VIDAS2)
@@ -302,6 +308,7 @@ while game==True:
             all_sprites.add(enemy)
             collide_enemy.add(enemy)
         if len(hit_tiro) > 0:
+            PONTOS+=10
             enemy.rect.x = -200
             all_sprites.add(enemy)
             collide_enemy.add(enemy)
@@ -333,6 +340,7 @@ while game==True:
         text_rect = text_surface.get_rect()
         text_rect.bottomleft = (10, HEIGHT - 10)
         window.blit(text_surface, text_rect)
+
         if jogo == 2:
             text_surface2 = score_font.render(chr(9829) * VIDAS2, True, (255, 0, 0))
             text_rect2 = text_surface.get_rect()
@@ -365,6 +373,13 @@ while game==True:
                     if event.key == pygame.K_SPACE:
                         game = False
 
+    if PONTOS == 200:
+        window.fill((0, 0, 0))  # Preenche com a cor branca
+        window.blit(floresta, (0, 0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game = False  
+                
     pygame.display.update()  # Mostra o novo frame para o jogador
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
