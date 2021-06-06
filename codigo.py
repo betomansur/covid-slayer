@@ -1,5 +1,5 @@
 import pygame
-from pygame import mixer
+#from pygame import mixer
 
 import random
 
@@ -27,7 +27,7 @@ background_rect = background.get_rect()
 go = pygame.image.load("Sprites/gameover.jpg").convert()
 gameover = pygame.transform.scale(go, (1000, 550))
 #Tela 2 de jogo
-flo = pygame.image.load('Sprites\cenario-vazio-do-parque-natural-do-fundo_1308-44780.jpg').convert()
+flo = pygame.image.load('Sprites/floresta.jpg').convert()
 floresta = pygame.transform.scale(flo, (1000, 550))
 #assets do tiro
 bullet_img = pygame.image.load('Sprites/seringa.png').convert_alpha()
@@ -43,7 +43,7 @@ JUMPING = 1
 # Define valores iniciais
 GRAVITY = 6
 PONTOS = 0
-VIDAS = 3
+VIDAS = 10
 VIDAS2= 0
 ###########################
 
@@ -63,7 +63,8 @@ class jogador(pygame.sprite.Sprite):
         self.lifes = VIDAS
         self.sprites = all_sprites
         self.bullets = all_bullets
-        self.tiro  = bullet_img
+        self.tiro = bullet_img
+        self.lado = 1
     def update(self):
         #Movimentação em y
         self.speedy += GRAVITY
@@ -80,6 +81,16 @@ class jogador(pygame.sprite.Sprite):
             self.rect.bottom = HEIGHT
             self.speedy = 0
             self.state = STILL
+        #Se estiver correndo para a direita
+        if self.speedx > 0:
+            self.image = pygame.image.load('Sprites/gunman.png').convert_alpha()
+            self.lado = 1
+        #Se estiver correndo para a esquerda
+        if self.speedx < 0:
+            self.image = pygame.image.load('Sprites/gunman_invertido.png').convert_alpha()
+            self.lado = -1
+        self.image = pygame.transform.scale(self.image, (90, 70))
+
     #Método que faz o personagem pular
     def jump(self):
         #Só pode pular se ainda não estiver pulando ou caindo
@@ -88,8 +99,15 @@ class jogador(pygame.sprite.Sprite):
             self.state = JUMPING    
     #Função do tiro
     def shoot(self):
-        # A nova bala vai ser criada logo acima e no centro horizontal da nave
-        new_bullet = Bullet(self.tiro, self.rect.centery, self.rect.centerx+40)
+        if self.lado == 1:
+            self.tiro = pygame.image.load('Sprites/seringa.png').convert_alpha()
+            self.tiro = pygame.transform.scale(self.tiro, (50, 20))
+            new_bullet = Bullet(self.tiro, self.rect.y+40, self.rect.x+70, 20)
+        elif self.lado == -1:
+            self.tiro = pygame.image.load('Sprites/seringa_invertida.png').convert_alpha()
+            self.tiro = pygame.transform.scale(self.tiro, (50, 20))
+            new_bullet = Bullet(self.tiro, self.rect.y+35, self.rect.x, -20)
+        #A seringa será criada saindo da arma do jogador
         self.bullets.add(new_bullet)
         self.sprites.add(new_bullet)
 
@@ -110,6 +128,7 @@ class jogador2(pygame.sprite.Sprite):
         self.sprites = all_sprites
         self.bullets = all_bullets
         self.tiro  = bullet_img
+        self.lado = 1
     def update(self):
         #Movimentação em y
         self.speedy += GRAVITY
@@ -126,6 +145,16 @@ class jogador2(pygame.sprite.Sprite):
             self.rect.bottom = HEIGHT
             self.speedy = 0
             self.state = STILL
+        #Se estiver correndo para a direita
+        if self.speedx > 0:
+            self.image = pygame.image.load('Sprites/gunman.png').convert_alpha()
+            self.lado = 1
+        #Se estiver correndo para a esquerda
+        if self.speedx < 0:
+            self.image = pygame.image.load('Sprites/gunman_invertido.png').convert_alpha()
+            self.lado = -1
+        self.image = pygame.transform.scale(self.image, (90, 70))
+        
     #Método que faz o personagem pular
     def jump(self):
         #Só pode pular se ainda não estiver pulando ou caindo
@@ -134,8 +163,15 @@ class jogador2(pygame.sprite.Sprite):
             self.state = JUMPING    
     #Função do tiro
     def shoot(self):
-        # A nova bala vai ser criada logo acima e no centro horizontal da nave
-        new_bullet = Bullet(self.tiro, self.rect.centery, self.rect.centerx+40)
+        if self.lado == 1:
+            self.tiro = pygame.image.load('Sprites/seringa.png').convert_alpha()
+            self.tiro = pygame.transform.scale(self.tiro, (50, 20))
+            new_bullet = Bullet(self.tiro, self.rect.y+40, self.rect.x+70, 20)
+        elif self.lado == -1:
+            self.tiro = pygame.image.load('Sprites/seringa_invertida.png').convert_alpha()
+            self.tiro = pygame.transform.scale(self.tiro, (50, 20))
+            new_bullet = Bullet(self.tiro, self.rect.y+35, self.rect.x, -20)
+        #A seringa será criada saindo da arma do jogador
         self.bullets.add(new_bullet)
         self.sprites.add(new_bullet)
 
@@ -149,7 +185,7 @@ class inimigo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(0, 70)
         self.rect.y = random.randint(-20, HEIGHT)
-        self.speedx = random.randint(10, 12)
+        self.speedx = random.randint(6, 8)
         self.speedy = random.randint(10, 11)
     #inimigo se move
     def update(self):  
@@ -161,20 +197,24 @@ class inimigo(pygame.sprite.Sprite):
 #Classe do tiro
 class Bullet(pygame.sprite.Sprite):
     # Construtor da classe.nem
-    def __init__(self, assets, bottom, centerx):
+    def __init__(self, tiro_img, bottom, centerx, speedx):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
-        self.image = bullet_img
+        self.image = tiro_img
         self.rect = self.image.get_rect()
         # Coloca no lugar inicial definido em x, y do constutor
         self.rect.centerx = centerx
         self.rect.bottom = bottom
-        self.speedx = 100 #Velocidade fixa pro lado
+        self.speedx = speedx
     def update(self):
-        # A bala só se move no eixo y
+        if self.speedx>0:
+            self.image = pygame.image.load('Sprites/seringa.png').convert_alpha()
+        elif self.speedx<0:
+            self.image = pygame.image.load('Sprites/seringa_invertida.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (50, 20))
         self.rect.x += self.speedx
         # Se o tiro passar do inicio da tela, morre.
-        if self.rect.left > WIDTH:
+        if self.rect.left > WIDTH or self.rect.right < 0:
             self.kill()
 
 #########################################################################
@@ -373,7 +413,7 @@ while game==True:
                     if event.key == pygame.K_SPACE:
                         game = False
 
-    if PONTOS == 200:
+    if PONTOS == 10000:
         window.fill((0, 0, 0))  # Preenche com a cor branca
         window.blit(floresta, (0, 0))
         for event in pygame.event.get():
