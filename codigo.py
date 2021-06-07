@@ -43,8 +43,8 @@ JUMPING = 1
 # Define valores iniciais
 GRAVITY = 6
 PONTOS = 0
-VIDAS = 10
-VIDAS2= 0
+VIDAS = 3
+VIDAS2= 3
 ###########################
 
 #Classe do jogador
