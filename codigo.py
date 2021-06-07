@@ -1,6 +1,5 @@
 import pygame
 #from pygame import mixer
-
 import random
 
 pygame.init()
@@ -183,16 +182,18 @@ class inimigo(pygame.sprite.Sprite):
         # Define estado atual
         self.image = inim_img
         self.rect = self.image.get_rect()
-        self.rect.x = random.randint(0, 70)
-        self.rect.y = random.randint(-20, HEIGHT)
-        self.speedx = random.randint(6, 8)
-        self.speedy = random.randint(10, 11)
+        self.rect.x = random.choice([-20, WIDTH+20])
+        self.rect.y = random.randint(HEIGHT-300, HEIGHT-20)
+        self.speedx = random.randint(2, 4)
     #inimigo se move
-    def update(self):  
-        self.rect.x += 6  
-        if self.rect.top > HEIGHT or self.rect.right  < 0 or self.rect.left > WIDTH:
-            self.rect.x = random.randint(0, WIDTH)  
-            self.rect.y = random.randint(0,550)
+    def update(self): 
+        if self.rect.x > WIDTH: 
+            self.rect.x -= 4
+        if self.rect.x < 0:
+            self.rect.x += 4 
+        if self.rect.top > HEIGHT or self.rect.right < -50 or self.rect.left > WIDTH+40:
+            self.rect.x = random.randint(-20, 20)  
+            self.rect.y = random.randint(HEIGHT-300, HEIGHT-20)
           
 #Classe do tiro
 class Bullet(pygame.sprite.Sprite):
@@ -232,7 +233,7 @@ collide_enemy = pygame.sprite.Group()
 player = jogador(jog_img, VIDAS)
 player2 = jogador2(jog_img, VIDAS2)
 all_sprites.add(player)
-for i in range(0,8):
+for i in range(8):
     enemy = inimigo(inim_img)
     all_sprites.add(enemy) 
     collide_enemy.add(enemy)   
@@ -240,6 +241,7 @@ for i in range(0,8):
 #------ Tela de inicio
 game=False
 tela_inicial = True
+tela_credito = False
 while tela_inicial:
     window.blit(background, (0, 0))
     #(janela, (cor,cor,cor), [eixox, eixoy, raio, grossura])
@@ -247,25 +249,25 @@ while tela_inicial:
     pygame.draw.rect(window, (0,0,0), [335, 320, 350, 60])
     pygame.draw.rect(window, (0,0,0), [335, 390, 350, 60])
     #Desenha nome do jogo
-    text_inic = score_font.render("Covid Slay", True, (255, 0, 0))
-    text_inic_rect = text_inic.get_rect()
-    text_inic_rect.midtop = (500,  160)
-    window.blit(text_inic, text_inic_rect)
+    text_nome = score_font.render("Covid Slay", True, (255, 0, 0))
+    text_nome_rect = text_nome.get_rect()
+    text_nome_rect.midtop = (500,  160)
+    window.blit(text_nome, text_nome_rect)
     #Opção 1 jogador
-    text_inic = score_font.render("1 Jogador", True, (255, 0, 0))
-    text_inic_rect = text_inic.get_rect()
-    text_inic_rect.midtop = (510,  270)
-    window.blit(text_inic, text_inic_rect)
+    text_jog1 = score_font.render("1 Jogador", True, (255, 0, 0))
+    text_jog1_rect = text_jog1.get_rect()
+    text_jog1_rect.midtop = (510,  270)
+    window.blit(text_jog1, text_jog1_rect)
     #Opção 2 jogadores
-    text_inic = score_font.render("2 Jogadores", True, (255, 0, 0))
-    text_inic_rect = text_inic.get_rect()
-    text_inic_rect.midtop = (510,  340)
-    window.blit(text_inic, text_inic_rect)
+    text_jog2 = score_font.render("2 Jogadores", True, (255, 0, 0))
+    text_jog2_rect = text_jog2.get_rect()
+    text_jog2_rect.midtop = (510,  340)
+    window.blit(text_jog2, text_jog2_rect)
     #Créditos 
-    text_inic = score_font.render("Créditos", True, (255, 0, 0))
-    text_inic_rect = text_inic.get_rect()
-    text_inic_rect.midtop = (510,  410)
-    window.blit(text_inic, text_inic_rect)
+    text_cred = score_font.render("Créditos", True, (255, 0, 0))
+    text_cred_rect = text_cred.get_rect()
+    text_cred_rect.midtop = (510,  410)
+    window.blit(text_cred, text_cred_rect)
     # ----- Trata eventos
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -283,9 +285,28 @@ while tela_inicial:
                     game = True
                     jogo = 2
                 #Caso aperte créditos
-                #elif pygame.mouse.get_pos()[0]>=334 and pygame.mouse.get_pos()[0]<=683 and pygame.mouse.get_pos()[1]>=391 and pygame.mouse.get_pos()[1]<=449:
-                    #tela_inicial = False
-                    #game = True
+                elif pygame.mouse.get_pos()[0]>=334 and pygame.mouse.get_pos()[0]<=683 and pygame.mouse.get_pos()[1]>=391 and pygame.mouse.get_pos()[1]<=449:
+                    tela_credito = True
+    
+    while tela_credito:
+        window.blit(background, (0, 0))
+        pygame.draw.rect(window, (0,0,0), [20, 30, 350, 60])
+        text_back = score_font.render("Voltar", True, (255, 0, 0))
+        text_back_rect = text_back.get_rect()
+        text_back_rect.midtop = (500,  160)
+        window.blit(text_back, text_back_rect) 
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                    tela_inicial = False
+            if event.type == pygame.MOUSEBUTTONDOWN: 
+                if pygame.mouse.get_pressed():
+                    #Caso aperte 1 jogador
+                    print(pygame.mouse.get_pos())
+                    if pygame.mouse.get_pos()[0]>=200 and pygame.mouse.get_pos()[0]<=683 and pygame.mouse.get_pos()[1]>=251 and pygame.mouse.get_pos()[1]<=308:
+                        tela_credito = False
+
+
     pygame.display.update()
 
 #Verifica se são 2 jogadores
@@ -341,24 +362,25 @@ while game==True:
 
         #Colisões
         hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, True, pygame.sprite.collide_mask)
-        hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, True, True)
+        hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, False, True)
         if len(hits_jog1) > 0:
             VIDAS -= 1
-            enemy.rect.x = -200
-            all_sprites.add(enemy)
-            collide_enemy.add(enemy)
+            for i in range(6):
+                all_sprites.add(enemy)
+                collide_enemy.add(enemy)
         if len(hit_tiro) > 0:
             PONTOS+=10
             enemy.rect.x = -200
-            all_sprites.add(enemy)
-            collide_enemy.add(enemy)
+            for i in range(6):
+                all_sprites.add(enemy)
+                collide_enemy.add(enemy)
         if jogo == 2:
             hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True, pygame.sprite.collide_mask)
             if len(hits_jog2) > 0:
                 VIDAS2 -= 1
-                enemy.rect.x = -200
-                all_sprites.add(enemy)
-                collide_enemy.add(enemy)
+                for i in range(6):
+                    all_sprites.add(enemy)
+                    collide_enemy.add(enemy)
 
         #Atualiza sprites
         all_sprites.update()
