@@ -3,6 +3,7 @@ import pygame
 import random
 
 pygame.init()
+##Os nomes das variáveis está em uma mistura de português e inglês##
 
 # ----- Gera tela principal
 WIDTH = 1000
@@ -11,7 +12,6 @@ window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Covid Slayer')
 
 # ----- Inicia assets
-##Os nomes das variáveis está em uma mistura de português e inglês##
 #assets jogador
 jog_img = pygame.image.load('Sprites/gunman.png').convert_alpha()
 jog_img = pygame.transform.scale(jog_img, (90, 70))
@@ -46,7 +46,7 @@ GRAVITY = 6
 PONTOS = 0 
 VIDAS = 10
 VIDAS2= 0
-VIDAS_BOSS = 5 
+VIDAS_BOSS = 5
 ###########################
 
 #Classe do jogador
@@ -185,18 +185,24 @@ class inimigo(pygame.sprite.Sprite):
         # Define estado atual
         self.image = inim_img
         self.rect = self.image.get_rect()
-        self.rect.x = random.choice([-20, WIDTH+20])
-        self.rect.y = random.randint(HEIGHT-300, HEIGHT-20)
-        self.speedx = random.randint(2, 4)
+        self.rect.x = random.choice([10, WIDTH-10])
+        if self.rect.x == 10:
+            self.lado = 'esq'
+        if self.rect.x == WIDTH-10:
+            self.lado = 'dir'
+        self.rect.y = random.randint(HEIGHT-200, HEIGHT-40)
+        self.speedx = random.randint(5, 7)
     #inimigo se move
-    def update(self): 
-        if self.rect.x > WIDTH: 
-            self.rect.x -= 4
-        if self.rect.x < 0:
-            self.rect.x += 4 
-        if self.rect.top > HEIGHT or self.rect.right < -50 or self.rect.left > WIDTH+40:
-            self.rect.x = random.randint(-20, 20)  
-            self.rect.y = random.randint(HEIGHT-300, HEIGHT-20)
+    def update(self):
+        if self.lado == 'esq':
+            self.rect.x += self.speedx
+        if self.lado == 'dir':
+            self.rect.x -= self.speedx
+        if self.rect.right > WIDTH+10:
+            self.lado = 'dir'
+        if self.rect.left < -10:
+            self.lado = 'esq'
+        
 class boss(pygame.sprite.Sprite):
     def __init__(self, boss_img, VIDAS_BOSS):
         pygame.sprite.Sprite.__init__(self)
@@ -249,16 +255,17 @@ player = jogador(jog_img, VIDAS)
 player2 = jogador2(jog_img, VIDAS2)
 inimigo2 = boss(boss_img,VIDAS_BOSS)
 all_sprites.add(player)
-for i in range(8):
+for i in range(0,8):
     enemy = inimigo(inim_img)
-    all_sprites.add(enemy)
-    collide_enemy.add(enemy)   
+    all_sprites.add(enemy) 
+    collide_enemy.add(enemy) 
 
 #------ Tela de inicio
-game = False
-tela_boss = False
 tela_inicial = True
 tela_credito = False
+game = False
+tela_boss = False
+jogo=1
 while tela_inicial:
     window.blit(background, (0, 0))
     #(janela, (cor,cor,cor), [eixox, eixoy, raio, grossura])
@@ -305,7 +312,7 @@ while tela_inicial:
                 elif pygame.mouse.get_pos()[0]>=334 and pygame.mouse.get_pos()[0]<=683 and pygame.mouse.get_pos()[1]>=391 and pygame.mouse.get_pos()[1]<=449:
                     tela_credito = True
     
-    while tela_credito:
+    while tela_credito == True:
         window.blit(background, (0, 0))
         pygame.draw.rect(window, (0,0,0), [20, 30, 350, 60])
         text_back = score_font.render("Voltar", True, (255, 0, 0))
@@ -379,25 +386,25 @@ while game==True:
 
         #Colisões
         hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, True, pygame.sprite.collide_mask)
-        hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, False, True)
+        hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, True, True)
+        
+
         if len(hits_jog1) > 0:
             VIDAS -= 1
-            for i in range(6):
-                all_sprites.add(enemy)
-                collide_enemy.add(enemy)
+            all_sprites.add(enemy)
+            collide_enemy.add(enemy)
         if len(hit_tiro) > 0:
             PONTOS+=10
-            enemy.rect.x = -200
-            for i in range(6):
-                all_sprites.add(enemy)
-                collide_enemy.add(enemy)
+            all_sprites.add(enemy)
+            collide_enemy.add(enemy)
         if jogo == 2:
             hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True, pygame.sprite.collide_mask)
             if len(hits_jog2) > 0:
                 VIDAS2 -= 1
-                for i in range(6):
-                    all_sprites.add(enemy)
-                    collide_enemy.add(enemy)
+                enemy.rect.x = -200
+                all_sprites.add(enemy)
+                collide_enemy.add(enemy)
+        
 
         #Atualiza sprites
         all_sprites.update()
