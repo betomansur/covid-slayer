@@ -438,7 +438,7 @@ while game==True:
                     if event.key == pygame.K_SPACE:
                         game = False
 
-    if PONTOS == 50 :
+    if PONTOS == 200:
         game = False
         tela_boss = True
     pygame.display.update()  # Mostra o novo frame para o jogador
