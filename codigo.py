@@ -413,7 +413,7 @@ while game==True:
                     if event.key == pygame.K_SPACE:
                         game = False
 
-    if PONTOS == 10000:
+    if PONTOS == 200  :
         window.fill((0, 0, 0))  # Preenche com a cor branca
         window.blit(floresta, (0, 0))
         for event in pygame.event.get():
