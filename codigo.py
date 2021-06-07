@@ -19,6 +19,8 @@ jog_img = pygame.transform.scale(jog_img, (90, 70))
 #assets inimigo
 inim_img = pygame.image.load('Sprites/bacteria1.png').convert_alpha()
 inim_img = pygame.transform.scale(inim_img, (70, 70))
+boss_img = pygame.image.load('Sprites/Boss1.png').convert_alpha()
+boss_img = pygame.transform.scale(inim_img, (200, 200))
 #assets background
 bg = pygame.image.load("Sprites/hospital.jpg").convert()
 background = pygame.transform.scale(bg, (1000, 550))
@@ -42,9 +44,10 @@ STILL = 0
 JUMPING = 1
 # Define valores iniciais
 GRAVITY = 6
-PONTOS = 0
+PONTOS = 0 
 VIDAS = 10
 VIDAS2= 0
+VIDAS_BOSS = 5 
 ###########################
 
 #Classe do jogador
@@ -185,7 +188,7 @@ class inimigo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(0, 70)
         self.rect.y = random.randint(-20, HEIGHT)
-        self.speedx = random.randint(6, 8)
+        self.speedx = random.randint(0, 3)
         self.speedy = random.randint(10, 11)
     #inimigo se move
     def update(self):  
@@ -193,6 +196,23 @@ class inimigo(pygame.sprite.Sprite):
         if self.rect.top > HEIGHT or self.rect.right  < 0 or self.rect.left > WIDTH:
             self.rect.x = random.randint(0, WIDTH)  
             self.rect.y = random.randint(0,550)
+
+class boss(pygame.sprite.Sprite):
+    def __init__(self, boss_img, VIDAS_BOSS):
+        pygame.sprite.Sprite.__init__(self)
+        # Define estado atual
+        self.image = boss_img
+        self.rect = self.image.get_rect()
+        self.rect.x = WIDTH-20
+        self.rect.y = HEIGHT-20
+        self.vidas = VIDAS_BOSS
+    def update(self):
+        if self.vidas < 1:
+            self.kill()
+
+
+
+
           
 #Classe do tiro
 class Bullet(pygame.sprite.Sprite):
@@ -227,18 +247,22 @@ FPS = 20
 all_sprites = pygame.sprite.Group()
 all_bullets = pygame.sprite.Group()
 collide_enemy = pygame.sprite.Group()
-
+  
 # Criando o jogador e inimigo
 player = jogador(jog_img, VIDAS)
 player2 = jogador2(jog_img, VIDAS2)
+inimigo2 = boss(boss_img,VIDAS_BOSS)
 all_sprites.add(player)
-for i in range(0,8):
+
+
+for i in range(0,20):
     enemy = inimigo(inim_img)
-    all_sprites.add(enemy) 
+    all_sprites.add(enemy)
     collide_enemy.add(enemy)   
 
 #------ Tela de inicio
-game=False
+game = False
+tela_boss = False
 tela_inicial = True
 while tela_inicial:
     window.blit(background, (0, 0))
@@ -363,6 +387,7 @@ while game==True:
         #Atualiza sprites
         all_sprites.update()
         collide_enemy.update()
+
         # ----- Gera saídas
         window.fill((0, 0, 0))  # Preenche com a cor preto
         window.blit(background, (0, 0))
@@ -413,12 +438,23 @@ while game==True:
                     if event.key == pygame.K_SPACE:
                         game = False
 
-    if PONTOS == 10000:
-        window.fill((0, 0, 0))  # Preenche com a cor branca
-        window.blit(floresta, (0, 0))
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                game = False  
+    if PONTOS == 200:
+        game = False
+        tela_boss = True
+    pygame.display.update()  # Mostra o novo frame para o jogador
+while tela_boss:
+    window.fill((0, 0, 0))  # Preenche com a cor branca
+    window.blit(floresta, (0, 0))
+    all_sprites.add(inimigo2)
+    collide_enemy.add(inimigo2)
+    if len(hit_tiro) > 0:
+        VIDAS_BOSS-=1
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game = False
+    all_sprites.update()
+    collide_enemy.update()
+    all_sprites.draw(window)
                 
     pygame.display.update()  # Mostra o novo frame para o jogador
 # ===== Finalização =====
