@@ -178,7 +178,6 @@ class jogador2(pygame.sprite.Sprite):
         self.bullets.add(new_bullet)
         self.sprites.add(new_bullet)
 
-
 #Classe do inimigo
 class inimigo(pygame.sprite.Sprite):
     def __init__(self, inim_img):
