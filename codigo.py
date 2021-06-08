@@ -44,7 +44,7 @@ JUMPING = 1
 # Define valores iniciais
 GRAVITY = 6
 PONTOS = 0 
-VIDAS = 10
+VIDAS = 15
 VIDAS2= 0
 VIDAS_BOSS = 5
 ###########################
@@ -191,7 +191,7 @@ class inimigo(pygame.sprite.Sprite):
         if self.rect.x == WIDTH-10:
             self.lado = 'dir'
         self.rect.y = random.randint(HEIGHT-200, HEIGHT-40)
-        self.speedx = random.randint(5, 7)
+        self.speedx = random.randint(3, 4)
     #inimigo se move
     def update(self):
         if self.lado == 'esq':
@@ -255,10 +255,10 @@ player = jogador(jog_img, VIDAS)
 player2 = jogador2(jog_img, VIDAS2)
 inimigo2 = boss(boss_img,VIDAS_BOSS)
 all_sprites.add(player)
-for i in range(0,8):
+for i in range(0,5):
     enemy = inimigo(inim_img)
     all_sprites.add(enemy) 
-    collide_enemy.add(enemy) 
+    collide_enemy.add(enemy)
 
 #------ Tela de inicio
 tela_inicial = True
@@ -385,26 +385,21 @@ while game==True:
                         player2.speedx = 0
 
         #Colisões
-        hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, True, pygame.sprite.collide_mask)
+        hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, True)
         hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, True, True)
-        
 
-        if len(hits_jog1) > 0:
+        if len(collide_enemy) < 7:
+            en = inimigo(inim_img)
+            all_sprites.add(en)
+            collide_enemy.add(en)
+        for hit in hits_jog1:
             VIDAS -= 1
-            all_sprites.add(enemy)
-            collide_enemy.add(enemy)
-        if len(hit_tiro) > 0:
+        for hit in hit_tiro:
             PONTOS+=10
-            all_sprites.add(enemy)
-            collide_enemy.add(enemy)
         if jogo == 2:
-            hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True, pygame.sprite.collide_mask)
+            hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True)
             if len(hits_jog2) > 0:
                 VIDAS2 -= 1
-                enemy.rect.x = -200
-                all_sprites.add(enemy)
-                collide_enemy.add(enemy)
-        
 
         #Atualiza sprites
         all_sprites.update()
