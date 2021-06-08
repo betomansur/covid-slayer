@@ -44,7 +44,7 @@ JUMPING = 1
 # Define valores iniciais
 GRAVITY = 6
 PONTOS = 0 
-VIDAS = 15
+VIDAS = 5
 VIDAS2= 0
 VIDAS_BOSS = 5
 ###########################
@@ -180,18 +180,18 @@ class jogador2(pygame.sprite.Sprite):
 
 #Classe do inimigo
 class inimigo(pygame.sprite.Sprite):
-    def __init__(self, inim_img):
+    def __init__(self, inim_img, speedx):
         pygame.sprite.Sprite.__init__(self)
         # Define estado atual
         self.image = inim_img
         self.rect = self.image.get_rect()
-        self.rect.x = random.choice([10, WIDTH-10])
-        if self.rect.x == 10:
+        self.rect.x = random.choice([0, WIDTH])
+        if self.rect.x == 0:
             self.lado = 'esq'
-        if self.rect.x == WIDTH-10:
+        if self.rect.x == WIDTH:
             self.lado = 'dir'
         self.rect.y = random.randint(HEIGHT-200, HEIGHT-40)
-        self.speedx = random.randint(3, 4)
+        self.speedx = speedx
     #inimigo se move
     def update(self):
         if self.lado == 'esq':
@@ -243,56 +243,32 @@ class Bullet(pygame.sprite.Sprite):
 game = True
 #Cria um relógio que conta o tempo em jogo
 tempo = pygame.time.Clock()
-FPS = 20
-
-#Cria grupos com as sprites e collides
-all_sprites = pygame.sprite.Group()
-all_bullets = pygame.sprite.Group()
-collide_enemy = pygame.sprite.Group()
-  
-# Criando o jogador e inimigo
-player = jogador(jog_img, VIDAS)
-player2 = jogador2(jog_img, VIDAS2)
-inimigo2 = boss(boss_img,VIDAS_BOSS)
-all_sprites.add(player)
-for i in range(0,5):
-    enemy = inimigo(inim_img)
-    all_sprites.add(enemy) 
-    collide_enemy.add(enemy)
-
+FPS = 30
 #------ Tela de inicio
 tela_inicial = True
 tela_credito = False
 game = False
 tela_boss = False
-jogo=1
+#Tela de inicio
 while tela_inicial:
     window.blit(background, (0, 0))
-    #(janela, (cor,cor,cor), [eixox, eixoy, raio, grossura])
+    #(janela, (cor,cor,cor), [x, y, largura x, largura y])
     pygame.draw.rect(window, (0,0,0), [335, 250, 350, 60]) 
     pygame.draw.rect(window, (0,0,0), [335, 320, 350, 60])
     pygame.draw.rect(window, (0,0,0), [335, 390, 350, 60])
     #Desenha nome do jogo
-    text_nome = score_font.render("Covid Slay", True, (255, 0, 0))
-    text_nome_rect = text_nome.get_rect()
-    text_nome_rect.midtop = (500,  160)
-    window.blit(text_nome, text_nome_rect)
-    #Opção 1 jogador
+    text_nome = score_font.render("Covid Slay", True, (0, 0, 0))
+    window.blit(text_nome, (365,160))
+    #Desenha Opção de 1 jogador
     text_jog1 = score_font.render("1 Jogador", True, (255, 0, 0))
-    text_jog1_rect = text_jog1.get_rect()
-    text_jog1_rect.midtop = (510,  270)
-    window.blit(text_jog1, text_jog1_rect)
-    #Opção 2 jogadores
+    window.blit(text_jog1, (380, 270))
+    #Desenha Opção de 2 jogadores
     text_jog2 = score_font.render("2 Jogadores", True, (255, 0, 0))
-    text_jog2_rect = text_jog2.get_rect()
-    text_jog2_rect.midtop = (510,  340)
-    window.blit(text_jog2, text_jog2_rect)
-    #Créditos 
+    window.blit(text_jog2, (360, 340))
+    #Desenha Créditos 
     text_cred = score_font.render("Créditos", True, (255, 0, 0))
-    text_cred_rect = text_cred.get_rect()
-    text_cred_rect.midtop = (510,  410)
-    window.blit(text_cred, text_cred_rect)
-    # ----- Trata eventos
+    window.blit(text_cred, (400, 410))
+    #Verifica se apertou algum botão
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
                 tela_inicial = False
@@ -309,37 +285,62 @@ while tela_inicial:
                     game = True
                     jogo = 2
                 #Caso aperte créditos
-                elif pygame.mouse.get_pos()[0]>=334 and pygame.mouse.get_pos()[0]<=683 and pygame.mouse.get_pos()[1]>=391 and pygame.mouse.get_pos()[1]<=449:
+                elif pygame.mouse.get_pos()[0]>=336 and pygame.mouse.get_pos()[0]<=684 and pygame.mouse.get_pos()[1]>=395 and pygame.mouse.get_pos()[1]<=450:
                     tela_credito = True
     
+    #Tela de créditos
     while tela_credito == True:
         window.blit(background, (0, 0))
-        pygame.draw.rect(window, (0,0,0), [20, 30, 350, 60])
+        #Cria retângulos
+        pygame.draw.rect(window, (0,0,0), [20, 30, 240, 60])
+        pygame.draw.rect(window, (0,0,0), [200, 180, 585, 200])
+        #Desenha opção de voltar
         text_back = score_font.render("Voltar", True, (255, 0, 0))
-        text_back_rect = text_back.get_rect()
-        text_back_rect.midtop = (500,  160)
-        window.blit(text_back, text_back_rect) 
+        window.blit(text_back, (60,50)) 
+        #Desenha nome dos criadores
+        text_gui = score_font.render("Guillermo Kuznietz", True, (200,25, 100))
+        text_ray = score_font.render("Raymond Joseph Diwan", True, (100, 25, 75))
+        text_beto = score_font.render("Alberto Mansur", True, (100, 190, 60))
+        window.blit(text_gui, (215, 200))
+        window.blit(text_ray, (215, 260))
+        window.blit(text_beto,(215, 320))
 
+        #Verifica se apertou algum botão
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                     tela_inicial = False
             if event.type == pygame.MOUSEBUTTONDOWN: 
                 if pygame.mouse.get_pressed():
-                    #Caso aperte 1 jogador
-                    print(pygame.mouse.get_pos())
-                    if pygame.mouse.get_pos()[0]>=200 and pygame.mouse.get_pos()[0]<=683 and pygame.mouse.get_pos()[1]>=251 and pygame.mouse.get_pos()[1]<=308:
+                    if pygame.mouse.get_pos()[0]>=10 and pygame.mouse.get_pos()[0]<=370 and pygame.mouse.get_pos()[1]>=30 and pygame.mouse.get_pos()[1]<=90:
                         tela_credito = False
-
-
+        pygame.display.update()
     pygame.display.update()
 
-#Verifica se são 2 jogadores
-if jogo == 2:
-    VIDAS2 = 3
-    all_sprites.add(player2)
+#Cria grupos com as sprites e collides
+all_sprites = pygame.sprite.Group()
+all_bullets = pygame.sprite.Group()
+collide_enemy = pygame.sprite.Group()
+# Criando os jogadores e inimigos
+if jogo == 1:
+    VIDAS += 4
+player = jogador(jog_img, VIDAS)
+player2 = jogador2(jog_img, VIDAS2)
+inimigo2 = boss(boss_img,VIDAS_BOSS)
+#Adiciona jogadores e inimigos nos grupos
+all_sprites.add(player)
+for i in range(5):
+    if jogo == 1:
+        enemy = inimigo(inim_img, 2)
+    elif jogo==2:
+        enemy = inimigo(inim_img, 2.6)
+        VIDAS2 = 5
+        all_sprites.add(player2)
+    all_sprites.add(enemy) 
+    collide_enemy.add(enemy)
+
 
 # ===== Loop principal =====
-while game==True:
+while game:
     if VIDAS > 0 or VIDAS2 > 0:
         tempo.tick(FPS)
         # ----- Trata eventos
@@ -348,22 +349,23 @@ while game==True:
             # ----- Verifica consequências
             if event.type == pygame.QUIT:
                 game = False
-            if event.type == pygame.KEYDOWN:
-                # Dependendo da tecla, altera a velocidade.
-                if event.key == pygame.K_LEFT:
-                    player.speedx -= 8
-                if event.key == pygame.K_RIGHT:
-                    player.speedx += 8
-                if event.key == pygame.K_UP:
-                    player.jump()
-                if event.key == pygame.K_SPACE:
-                    player.shoot()
-            # Verifica se soltou alguma tecla.
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                    player.speedx = 0
+            if VIDAS > 0:
+                if event.type == pygame.KEYDOWN:
+                    # Dependendo da tecla, altera a velocidade.
+                    if event.key == pygame.K_LEFT:
+                        player.speedx -= 8
+                    if event.key == pygame.K_RIGHT:
+                        player.speedx += 8
+                    if event.key == pygame.K_UP:
+                        player.jump()
+                    if event.key == pygame.K_SPACE:
+                        player.shoot()
+                # Verifica se soltou alguma tecla.
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                        player.speedx = 0
 
-            if jogo ==2:
+            if jogo ==2 and VIDAS2>0:
                 #############Teclas jogador 2##############
                 # ----- Verifica consequências
                 if event.type == pygame.QUIT:
@@ -385,11 +387,15 @@ while game==True:
                         player2.speedx = 0
 
         #Colisões
-        hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, True)
+        if VIDAS>0:
+            hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, True)
         hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, True, True)
 
         if len(collide_enemy) < 7:
-            en = inimigo(inim_img)
+            if jogo == 1:
+                en = inimigo(inim_img, 2)
+            elif jogo == 2:
+                en = inimigo(inim_img, 2.6)
             all_sprites.add(en)
             collide_enemy.add(en)
         for hit in hits_jog1:
@@ -397,7 +403,8 @@ while game==True:
         for hit in hit_tiro:
             PONTOS+=10
         if jogo == 2:
-            hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True)
+            if VIDAS2>0:
+                hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True)
             if len(hits_jog2) > 0:
                 VIDAS2 -= 1
 
@@ -413,21 +420,18 @@ while game==True:
         
         # Desenhando o score
         text_surface = score_font.render("{:06d}".format(PONTOS), True, (255, 0, 200))
-        text_rect = text_surface.get_rect()
-        text_rect.midtop = (90,  10)
-        window.blit(text_surface, text_rect)
+        window.blit(text_surface, (15, 20))
 
         # Desenhando as vidas
-        text_surface = score_font.render(chr(9829) * VIDAS, True, (255, 0, 0))
-        text_rect = text_surface.get_rect()
-        text_rect.bottomleft = (10, HEIGHT - 10)
-        window.blit(text_surface, text_rect)
+        if jogo == 1:
+            text_surface = score_font.render(chr(9829) * VIDAS, True, (255, 0, 0))
+        elif jogo == 2:
+            text_surface = score_font.render('P1'+chr(9829) * VIDAS, True, (255, 0, 0))
+        window.blit(text_surface, (15, HEIGHT - 40))
 
         if jogo == 2:
-            text_surface2 = score_font.render(chr(9829) * VIDAS2, True, (255, 0, 0))
-            text_rect2 = text_surface.get_rect()
-            text_rect2.bottomleft = (WIDTH -100, HEIGHT - 10)
-            window.blit(text_surface2, text_rect2)
+            text_surface2 = score_font.render('P2'+chr(9829) * VIDAS2, True, (255, 0, 0))
+            window.blit(text_surface2, (WIDTH-200, HEIGHT - 40))
     
     #Verifica se o jogo acabou
     if jogo == 1:
@@ -437,23 +441,20 @@ while game==True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     game = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        game = False
-    else:
+
+    elif jogo == 2:
         if VIDAS<1:
             all_sprites.remove(player)
+            hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, False)
         elif VIDAS2<1:
             all_sprites.remove(player2)
+            hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, False)
         if VIDAS<1 and VIDAS2<1:
             window.fill((0, 0, 0))  # Preenche com a cor preto
             window.blit(gameover, (0, 0))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     game = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        game = False
 
     if PONTOS == 10000:
         game = False
