@@ -382,11 +382,11 @@ all_boss.add(inimigo2)
 all_sprites.add(player)
 for i in range(5):
     if jogo == 1:
-        enemy = inimigo(inim_img, 2.4)
+        enemy = inimigo(inim_img, 2.2)
     elif jogo == 2:
         BACTERIAS = 40
         VIDAS_BOSS = 40
-        enemy = inimigo(inim_img, 2.6)
+        enemy = inimigo(inim_img, 2.4)
         VIDAS2 = 4
         all_sprites.add(player2)
     all_sprites.add(enemy)
@@ -432,7 +432,7 @@ while game:
                         player2.speedx += 8
                     if event.key == pygame.K_w:
                         player2.jump()
-                    if event.key == pygame.K_q:
+                    if event.key == pygame.K_t:
                         player2.shoot()
                 # Verifica se soltou alguma tecla.
                 if event.type == pygame.KEYUP:
@@ -461,7 +461,7 @@ while game:
         if tela_boss == True:
             hit_bala_boss = pygame.sprite.spritecollide(inimigo2, all_bullets, True)
 
-        for hit in hits_jog1:
+        if len(hits_jog1) > 0:
             VIDAS -= 1
         for hit in hit_tiro:
             BACTERIAS -= 1
@@ -474,7 +474,7 @@ while game:
                 if jogo == 1:
                     en = inimigo(inim_img, 2.2)
                 elif jogo == 2:
-                    en = inimigo(inim_img, 2.6)
+                    en = inimigo(inim_img, 2.4)
                 all_sprites.add(en)
                 collide_enemy.add(en)
             # Atualiza sprites
