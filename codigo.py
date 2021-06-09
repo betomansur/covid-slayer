@@ -10,11 +10,12 @@ pygame.init()
 ##Os nomes das variáveis está em uma mistura de português e inglês##
 
 
-# musica
-#mixer.music.load('Sprites/music.wav')
+#Música
+mixer.music.load('Sprites/music.wav')
+mixer.music.play(-1)
+#Alternativa 2 (NÃO COLOQUE A MENOS QUE QUEIRA PERDER AUDIÇÃO)
+#mixer.music.load('Sprites/earape.wav')
 #mixer.music.play(-1)
-# mixer.music.load('Sprites/earape.wav')
-# mixer.music.play(-1)
 
 
 # ----- Gera tela principal
