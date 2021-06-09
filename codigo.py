@@ -33,7 +33,7 @@ jog_img = pygame.transform.scale(jog_img, (90, 70))
 inim_img = pygame.image.load('Sprites/bacteria1.png').convert_alpha()
 inim_img = pygame.transform.scale(inim_img, (70, 70))
 boss_img = pygame.image.load('Sprites/Boss1.png').convert_alpha()
-boss_img = pygame.transform.scale(inim_img, (200, 200))
+boss_img = pygame.transform.scale(boss_img, (90, 90))
 #assets background
 bg = pygame.image.load("Sprites/hospital.jpg").convert()
 background = pygame.transform.scale(bg, (1000, 550))
@@ -223,16 +223,19 @@ class boss(pygame.sprite.Sprite):
         # Define estado atual
         self.image = boss_img
         self.rect = self.image.get_rect()
-        self.rect.x = WIDTH-20
-        self.rect.y = HEIGHT-20
+        self.rect.x = WIDTH-200
+        self.rect.y = HEIGHT-100
         self.vidas = VIDAS_BOSS
         self.bacteria = inim_img
         self.collide_enemy = collide_enemy
         self.sprites = all_sprites
+        self.time = 5000
     def update(self):
+        self.time -= 50
         new_bacteria = inimigo(self.bacteria, 3)
-        self.collide_enemy.add(new_bacteria)
-        self.sprites.add(new_bacteria)
+        if len(self.collide_enemy)<3:
+            self.collide_enemy.add(new_bacteria)
+            self.sprites.add(new_bacteria)
           
 #Classe do tiro
 class Bullet(pygame.sprite.Sprite):
@@ -362,7 +365,6 @@ for i in range(5):
     collide_enemy.add(enemy)
 
 
-# ===== Loop principal ===== 
 while game:
     if VIDAS > 0 or VIDAS2 > 0:
         tempo.tick(FPS)
@@ -410,25 +412,28 @@ while game:
                         player2.speedx = 0
 
         #Colisões
-        if VIDAS>0:
-            hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, True)
+        hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, True)
+        hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True)
+        hit_bala_boss = pygame.sprite.spritecollide(inimigo2, all_bullets, True)
         hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, True, True)
+
         for hit in hits_jog1:
             VIDAS -= 1
         for hit in hit_tiro: 
             PONTOS+=10
         if jogo == 2:
-            if VIDAS2>0:
-                hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True)
             if len(hits_jog2) > 0:
                 VIDAS2 -= 1
-  
-        if PONTOS == 200:
+
             tela_jogo = False
             tela_boss = True
-            all_sprites.remove(enemy)
-            all_sprites.remove(en)
+            all_sprites.empty()
             collide_enemy.empty()
+            all_sprites.add(player)
+            all_sprites.add(inimigo2)
+            if jogo==2:
+                all_sprites.add(player2)
+            x-=1
 
         if tela_jogo == True:
             if len(collide_enemy) < 7:
@@ -448,15 +453,10 @@ while game:
             all_sprites.draw(window)
 
         if tela_boss == True:
-            all_sprites.add(inimigo2)
-            all_sprites.update()
-            collide_enemy.update()
-            window.fill((0, 0, 0))  # Preenche com a cor preto
-            window.blit(floresta, (0, 0))
-            hit_bala_boss = pygame.sprite.spritecollide(inimigo2, all_bullets, True)
-            hit_joga_boss = pygame.sprite.spritecollide(player, all_boss, False, False)
+            hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, False, True)
+            if len(collide_enemy)<3:
+                all_sprites.add(en)
             if jogo == 2:
-                hit_joga2_boss = pygame.sprite.spritecollide(player2, all_boss, False, False)
                 if len(hit_joga2_boss) > 0:
                     VIDAS2 -=1
             if len(hit_bala_boss) > 0:
@@ -466,6 +466,10 @@ while game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     game = False
+            all_sprites.update()
+            collide_enemy.update()
+            window.fill((0, 0, 0))  # Preenche com a cor preto
+            window.blit(floresta, (0, 0))
             
             all_sprites.draw(window)
         
