@@ -1,9 +1,23 @@
+from typing import ValuesView
 import pygame
 #from pygame import mixer
 import random
 
+from pygame import mixer
+
+
+
 pygame.init()
 ##Os nomes das variáveis está em uma mistura de português e inglês##
+
+
+
+#musica
+mixer.music.load('Sprites/music.wav')
+mixer.music.play(-1)
+#mixer.music.load('Sprites/earape.wav')
+#mixer.music.play(-1)
+
 
 # ----- Gera tela principal
 WIDTH = 1000
@@ -351,8 +365,7 @@ for i in range(5):
     all_sprites.add(enemy) 
     collide_enemy.add(enemy)
 
-x=1
-# ===== Loop principal =====
+
 while game:
     if VIDAS > 0 or VIDAS2 > 0:
         tempo.tick(FPS)
@@ -404,18 +417,15 @@ while game:
         hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True)
         hit_bala_boss = pygame.sprite.spritecollide(inimigo2, all_bullets, True)
         hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, True, True)
-        hit_joga_boss = pygame.sprite.spritecollide(player, all_boss, False, False)
-        hit_joga2_boss = pygame.sprite.spritecollide(player2, all_boss, False, False)
-        
+
         for hit in hits_jog1:
             VIDAS -= 1
-        for hit in hit_tiro:
+        for hit in hit_tiro: 
             PONTOS+=10
         if jogo == 2:
             if len(hits_jog2) > 0:
                 VIDAS2 -= 1
 
-        if PONTOS == 50 and x==1:
             tela_jogo = False
             tela_boss = True
             all_sprites.empty()
