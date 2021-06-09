@@ -271,6 +271,7 @@ tela_credito = False
 game = False
 tela_jogo = False
 tela_boss = False
+tela_vitoria = False
 #Tela de inicio
 while tela_inicial:
     window.blit(background, (0, 0))
@@ -463,6 +464,9 @@ while game:
                 VIDAS_BOSS-=1
             if len(hit_joga_boss) > 0:
                 VIDAS -=1
+            if VIDAS_BOSS < 1:
+                tela_boss = False
+                tela_vitoria = True
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     game = False
@@ -470,9 +474,13 @@ while game:
             collide_enemy.update()
             window.fill((0, 0, 0))  # Preenche com a cor preto
             window.blit(floresta, (0, 0))
-            
             all_sprites.draw(window)
         
+        if tela_vitoria == True: 
+            game = False
+
+
+
         # Desenhando o score
         text_surface = score_font.render("{:06d}".format(PONTOS), True, (255, 0, 200))
         window.blit(text_surface, (15, 20))
