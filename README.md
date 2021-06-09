@@ -9,8 +9,8 @@
  
  JOGADOR 2 = W A D PARA MOVER E TECLA T PARA ATIRAR
  
-# BOA SORTE E SE DIVIRTA!
+ BOA SORTE E SE DIVIRTA!
 
 # Desenvolvedores: Alberto Mansur, Guillermo Kuznietz e Raymond Joseph Diwan
-# Pygame-beto-raymond-guiliermo
+
 Link para breve vídeo de demonstração de funcionamento do jogo: https://youtu.be/lBH6iIMo9f0
