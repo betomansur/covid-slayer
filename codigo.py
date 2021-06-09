@@ -31,7 +31,7 @@ jog_img = pygame.transform.scale(jog_img, (90, 70))
 inim_img = pygame.image.load('Sprites/bacteria1.png').convert_alpha()
 inim_img = pygame.transform.scale(inim_img, (70, 70))
 boss_img = pygame.image.load('Sprites/Boss1.png').convert_alpha()
-boss_img = pygame.transform.scale(boss_img, (90, 90))
+boss_img = pygame.transform.scale(boss_img, (300, 300))
 # assets background
 bg = pygame.image.load("Sprites/hospital.jpg").convert()
 background = pygame.transform.scale(bg, (1000, 550))
@@ -55,10 +55,10 @@ STILL = 0
 JUMPING = 1
 # Define valores iniciais
 GRAVITY = 6
-PONTOS = 0
+BACTERIAS = 20
 VIDAS = 5
 VIDAS2 = 0
-VIDAS_BOSS = 5
+VIDAS_BOSS = 20
 ###########################
 
 # Classe do jogador
@@ -232,15 +232,15 @@ class inimigo(pygame.sprite.Sprite):
         if self.rect.left < -10:
             self.lado = 'esq'
 
-
+#Classe do boss
 class boss(pygame.sprite.Sprite):
     def __init__(self, boss_img, VIDAS_BOSS):
         pygame.sprite.Sprite.__init__(self)
         # Define estado atual
         self.image = boss_img
         self.rect = self.image.get_rect()
-        self.rect.x = WIDTH-200
-        self.rect.y = HEIGHT-100
+        self.rect.x = WIDTH-300
+        self.rect.y = HEIGHT-300
         self.vidas = VIDAS_BOSS
         self.bacteria = inim_img
         self.collide_enemy = collide_enemy
@@ -436,23 +436,8 @@ while game:
                     if event.key == pygame.K_a or event.key == pygame.K_d:
                         player2.speedx = 0
 
-        # Colisões
-        hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, True)
-        hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True)
-        hit_bala_boss = pygame.sprite.spritecollide(inimigo2, all_bullets, True)
-        hit_joga_boss = pygame.sprite.spritecollide(player, all_boss, False)
-        hit_joga2_boss = pygame.sprite.spritecollide(player2, all_boss, False)
-        hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, True, True)
-
-        for hit in hits_jog1:
-            VIDAS -= 1
-        for hit in hit_tiro:
-            PONTOS += 10
-        if jogo == 2:
-            if len(hits_jog2) > 0:
-                VIDAS2 -= 1
-        
-        if PONTOS == 50 and x==1:
+        #Verifica se matou a quantidade necessária para o boss
+        if BACTERIAS == 0 and x==1:
             tela_jogo = False
             tela_boss = True
             all_sprites.empty()
@@ -462,6 +447,25 @@ while game:
             if jogo == 2:
                 all_sprites.add(player2)
             x -= 1
+
+        # Colisões
+        hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, True)
+        if jogo == 2:
+            hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True)
+            hit_joga2_boss = pygame.sprite.spritecollide(player2, all_boss, False)
+        hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, True, True)
+        if tela_boss == True:
+            hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, False, True)
+            hit_bala_boss = pygame.sprite.spritecollide(inimigo2, all_bullets, True)
+            hit_joga_boss = pygame.sprite.spritecollide(player, all_boss, False)
+
+        for hit in hits_jog1:
+            VIDAS -= 1
+        for hit in hit_tiro:
+            BACTERIAS -= 1
+        if jogo == 2:
+            if len(hits_jog2) > 0:
+                VIDAS2 -= 1
 
         if tela_jogo == True:
             if len(collide_enemy) < 7:
@@ -479,6 +483,9 @@ while game:
             window.blit(background, (0, 0))
             # Desenhando as sprites
             all_sprites.draw(window)
+            # Desenhando o score
+            text_surface = score_font.render("{:02d}".format(BACTERIAS), True, (160, 255, 100))
+            window.blit(text_surface, (15, 20))
 
         if tela_boss == True:
             hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, False, True)
@@ -492,8 +499,8 @@ while game:
             if len(hit_joga_boss) > 0:
                 VIDAS -= 1
             if VIDAS_BOSS < 1:
-                tela_boss = False
                 tela_vitoria = True
+                game = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     game = False
@@ -502,21 +509,10 @@ while game:
             window.fill((0, 0, 0))  # Preenche com a cor preto
             window.blit(floresta, (0, 0))
             all_sprites.draw(window)
-
-        if tela_vitoria == True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    game = False
-
-            window.fill((0, 0, 0))  # Preenche com a cor preto
-            window.blit(floresta, (0, 0))
             # Desenhando o score
-            text_vitoria = score_font.render("Parabens você venceu!!", True, (255, 0, 200))
-            window.blit(text_vitoria, (15, 20))
+            text_surface = score_font.render("{:02d}".format(VIDAS_BOSS), True, (255, 60, 60))
+            window.blit(text_surface, (15, 20))
 
-        # Desenhando o score
-        text_surface = score_font.render("{:06d}".format(PONTOS), True, (255, 0, 200))
-        window.blit(text_surface, (15, 20))
 
         # Desenhando as vidas
         if jogo == 1:
@@ -551,7 +547,29 @@ while game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     game = False
-
     pygame.display.update()  # Mostra o novo frame para o jogador
+
+while tela_vitoria:
+    window.fill((0, 0, 0))  # Preenche com a cor preto
+    window.blit(floresta, (0, 0))
+    pygame.draw.rect(window, (0, 0, 0), [170, 170, 680, 90])
+    pygame.draw.rect(window, (0, 0, 0), [360, 300, 200, 70])
+    # Desenhando o score
+    text_vitoria = score_font.render("Parabéns você venceu!!", True, (255, 255, 120))
+    window.blit(text_vitoria, (200, 200))
+    text_sair = score_font.render("Sair", True, (255, 0, 0))
+    window.blit(text_sair, (400, 325))
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+                tela_vitoria = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if pygame.mouse.get_pressed():
+                if pygame.mouse.get_pos()[0] >= 360 and pygame.mouse.get_pos()[0] <= 560 and pygame.mouse.get_pos()[1] >= 300 and pygame.mouse.get_pos()[1] <= 370:
+                    tela_vitoria = False
+
+    pygame.display.update()
+
+
+
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
