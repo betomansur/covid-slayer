@@ -1,4 +1,3 @@
-# Pygame-beto-raymond-guiliermo
 # BEM VINDO AO COVID SLAYER
  NESSE JOGO SUA FUNÇÃO É SOBREVIVER UMA ORDA DE COVIDS E MATAR O BOSS FINAL!
  
@@ -10,3 +9,5 @@
  
  JOGADOR 2 = W A D PARA MOVER E TECLA T PARA ATIRAR
 # BOA SORTE E SE DIVIRTA!
+
+# Pygame-beto-raymond-guiliermo
