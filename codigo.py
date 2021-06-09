@@ -19,7 +19,7 @@ jog_img = pygame.transform.scale(jog_img, (90, 70))
 inim_img = pygame.image.load('Sprites/bacteria1.png').convert_alpha()
 inim_img = pygame.transform.scale(inim_img, (70, 70))
 boss_img = pygame.image.load('Sprites/Boss1.png').convert_alpha()
-boss_img = pygame.transform.scale(boss_img, (70, 70))
+boss_img = pygame.transform.scale(boss_img, (90, 90))
 #assets background
 bg = pygame.image.load("Sprites/hospital.jpg").convert()
 background = pygame.transform.scale(bg, (1000, 550))
@@ -209,8 +209,8 @@ class boss(pygame.sprite.Sprite):
         # Define estado atual
         self.image = boss_img
         self.rect = self.image.get_rect()
-        self.rect.x = WIDTH-20
-        self.rect.y = HEIGHT-20
+        self.rect.x = WIDTH-200
+        self.rect.y = HEIGHT-100
         self.vidas = VIDAS_BOSS
         self.bacteria = inim_img
         self.collide_enemy = collide_enemy
