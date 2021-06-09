@@ -1,9 +1,23 @@
+from typing import ValuesView
 import pygame
 #from pygame import mixer
 import random
 
+from pygame import mixer
+
+
+
 pygame.init()
 ##Os nomes das variáveis está em uma mistura de português e inglês##
+
+
+
+#musica
+mixer.music.load('Sprites/music.wav')
+mixer.music.play(-1)
+#mixer.music.load('Sprites/earape.wav')
+#mixer.music.play(-1)
+
 
 # ----- Gera tela principal
 WIDTH = 1000
@@ -177,6 +191,7 @@ class jogador2(pygame.sprite.Sprite):
         self.bullets.add(new_bullet)
         self.sprites.add(new_bullet)
 
+
 #Classe do inimigo
 class inimigo(pygame.sprite.Sprite):
     def __init__(self, inim_img, speedx):
@@ -347,7 +362,7 @@ for i in range(5):
     collide_enemy.add(enemy)
 
 
-# ===== Loop principal =====
+# ===== Loop principal ===== 
 while game:
     if VIDAS > 0 or VIDAS2 > 0:
         tempo.tick(FPS)
@@ -398,25 +413,17 @@ while game:
         if VIDAS>0:
             hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, True)
         hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, True, True)
-
-        if len(collide_enemy) < 7:
-            if jogo == 1:
-                en = inimigo(inim_img, 2)
-            elif jogo == 2:
-                en = inimigo(inim_img, 2.6)
-            all_sprites.add(en)
-            collide_enemy.add(en)
         for hit in hits_jog1:
             VIDAS -= 1
-        for hit in hit_tiro:
+        for hit in hit_tiro: 
             PONTOS+=10
         if jogo == 2:
             if VIDAS2>0:
                 hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True)
             if len(hits_jog2) > 0:
                 VIDAS2 -= 1
-
-        if PONTOS == 50:
+  
+        if PONTOS == 200:
             tela_jogo = False
             tela_boss = True
             all_sprites.remove(enemy)
@@ -424,6 +431,13 @@ while game:
             collide_enemy.empty()
 
         if tela_jogo == True:
+            if len(collide_enemy) < 7:
+                if jogo == 1:
+                    en = inimigo(inim_img, 2)
+                elif jogo == 2:
+                    en = inimigo(inim_img, 2.6)
+                all_sprites.add(en)
+                collide_enemy.add(en)
             #Atualiza sprites
             all_sprites.update()
             collide_enemy.update()
