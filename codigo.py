@@ -56,9 +56,9 @@ JUMPING = 1
 # Define valores iniciais
 GRAVITY = 6
 BACTERIAS = 20
-VIDAS = 5
+VIDAS = 4
 VIDAS2 = 0
-VIDAS_BOSS = 20
+VIDAS_BOSS = 30
 ###########################
 
 # Classe do jogador
@@ -218,7 +218,7 @@ class inimigo(pygame.sprite.Sprite):
             self.lado = 'esq'
         if self.rect.x == WIDTH:
             self.lado = 'dir'
-        self.rect.y = random.randint(HEIGHT-200, HEIGHT-40)
+        self.rect.y = random.randint(HEIGHT-200, HEIGHT-50)
         self.speedx = speedx
     # inimigo se move
 
@@ -250,7 +250,7 @@ class boss(pygame.sprite.Sprite):
     def update(self):
         self.time -= 50
         new_bacteria = inimigo(self.bacteria, 3)
-        if len(self.collide_enemy) < 3:
+        if len(self.collide_enemy) < 5:
             self.collide_enemy.add(new_bacteria)
             self.sprites.add(new_bacteria)
 
@@ -292,7 +292,7 @@ FPS = 30
 tela_inicial = True
 tela_credito = False
 game = False
-tela_jogo = False
+tela_hospital = False
 tela_boss = False
 tela_vitoria = False
 x=1
@@ -325,13 +325,13 @@ while tela_inicial:
                 if pygame.mouse.get_pos()[0] >= 334 and pygame.mouse.get_pos()[0] <= 683 and pygame.mouse.get_pos()[1] >= 251 and pygame.mouse.get_pos()[1] <= 308:
                     tela_inicial = False
                     game = True
-                    tela_jogo = True
+                    tela_hospital = True
                     jogo = 1
                 # Caso aperte 2 jogadores
                 elif pygame.mouse.get_pos()[0] >= 334 and pygame.mouse.get_pos()[0] <= 683 and pygame.mouse.get_pos()[1] >= 322 and pygame.mouse.get_pos()[1] <= 375:
                     tela_inicial = False
                     game = True
-                    tela_jogo = True
+                    tela_hospital = True
                     jogo = 2
                 # Caso aperte créditos
                 elif pygame.mouse.get_pos()[0] >= 336 and pygame.mouse.get_pos()[0] <= 684 and pygame.mouse.get_pos()[1] >= 395 and pygame.mouse.get_pos()[1] <= 450:
@@ -372,7 +372,7 @@ collide_enemy = pygame.sprite.Group()
 all_boss = pygame.sprite.Group()
 # Criando os jogadores e inimigos
 if jogo == 1:
-    VIDAS += 4
+    VIDAS += 1
 player = jogador(jog_img, VIDAS)
 player2 = jogador2(jog_img, VIDAS2)
 inimigo2 = boss(boss_img, VIDAS_BOSS)
@@ -381,10 +381,12 @@ all_boss.add(inimigo2)
 all_sprites.add(player)
 for i in range(5):
     if jogo == 1:
-        enemy = inimigo(inim_img, 2)
+        enemy = inimigo(inim_img, 2.4)
     elif jogo == 2:
+        BACTERIAS = 40
+        VIDAS_BOSS = 40
         enemy = inimigo(inim_img, 2.6)
-        VIDAS2 = 5
+        VIDAS2 = 4
         all_sprites.add(player2)
     all_sprites.add(enemy)
     collide_enemy.add(enemy)
@@ -438,7 +440,7 @@ while game:
 
         #Verifica se matou a quantidade necessária para o boss
         if BACTERIAS == 0 and x==1:
-            tela_jogo = False
+            tela_hospital = False
             tela_boss = True
             all_sprites.empty()
             collide_enemy.empty()
@@ -449,15 +451,14 @@ while game:
             x -= 1
 
         # Colisões
-        hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, True)
-        if jogo == 2:
-            hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True)
-            hit_joga2_boss = pygame.sprite.spritecollide(player2, all_boss, False)
         hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, True, True)
+        if VIDAS > 1:
+            hits_jog1 = pygame.sprite.spritecollide(player, collide_enemy, True)
+        if jogo == 2:
+            if VIDAS2 > 1:
+                hits_jog2 = pygame.sprite.spritecollide(player2, collide_enemy, True)
         if tela_boss == True:
-            hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, False, True)
             hit_bala_boss = pygame.sprite.spritecollide(inimigo2, all_bullets, True)
-            hit_joga_boss = pygame.sprite.spritecollide(player, all_boss, False)
 
         for hit in hits_jog1:
             VIDAS -= 1
@@ -467,10 +468,10 @@ while game:
             if len(hits_jog2) > 0:
                 VIDAS2 -= 1
 
-        if tela_jogo == True:
-            if len(collide_enemy) < 7:
+        if tela_hospital == True:
+            while len(collide_enemy) < 7:
                 if jogo == 1:
-                    en = inimigo(inim_img, 2)
+                    en = inimigo(inim_img, 2.2)
                 elif jogo == 2:
                     en = inimigo(inim_img, 2.6)
                 all_sprites.add(en)
@@ -488,16 +489,11 @@ while game:
             window.blit(text_surface, (15, 20))
 
         if tela_boss == True:
-            hit_tiro = pygame.sprite.groupcollide(all_bullets, collide_enemy, False, True)
-            if len(collide_enemy) < 3:
+            if len(collide_enemy) < 5:
+                
                 all_sprites.add(en)
-            if jogo == 2:
-                if len(hit_joga2_boss) > 0:
-                    VIDAS2 -= 1
             if len(hit_bala_boss) > 0:
                 VIDAS_BOSS -= 1
-            if len(hit_joga_boss) > 0:
-                VIDAS -= 1
             if VIDAS_BOSS < 1:
                 tela_vitoria = True
                 game = False
@@ -510,17 +506,15 @@ while game:
             window.blit(floresta, (0, 0))
             all_sprites.draw(window)
             # Desenhando o score
-            text_surface = score_font.render("{:02d}".format(VIDAS_BOSS), True, (255, 60, 60))
+            text_surface = score_font.render("{:02d}".format(VIDAS_BOSS), True, (255, 20, 20))
             window.blit(text_surface, (15, 20))
 
 
         # Desenhando as vidas
-        if jogo == 1:
-            text_vida = score_font.render(chr(9829) * VIDAS, True, (255, 0, 0))
-        elif jogo == 2:
-            text_vida = score_font.render(chr(9829) * VIDAS, True, (255, 0, 0))
+        text_vida = score_font.render(chr(9829) * VIDAS, True, (255, 0, 0))
+        if jogo == 2:
             text_vida2 = score_font.render(chr(9829) * VIDAS2, True, (255, 0, 0))
-            window.blit(text_vida2, (WIDTH-200, HEIGHT - 40))
+            window.blit(text_vida2, (WIDTH-130, HEIGHT - 40))
         window.blit(text_vida, (15, HEIGHT - 40))
 
     # Verifica se o jogo acabou
@@ -535,12 +529,8 @@ while game:
     elif jogo == 2:
         if VIDAS < 1:
             all_sprites.remove(player)
-            hits_jog1 = pygame.sprite.spritecollide(
-                player, collide_enemy, False)
         elif VIDAS2 < 1:
             all_sprites.remove(player2)
-            hits_jog2 = pygame.sprite.spritecollide(
-                player2, collide_enemy, False)
         if VIDAS < 1 and VIDAS2 < 1:
             window.fill((0, 0, 0))  # Preenche com a cor preto
             window.blit(gameover, (0, 0))
